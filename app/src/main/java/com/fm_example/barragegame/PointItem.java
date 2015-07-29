@@ -2,7 +2,7 @@ package com.fm_example.barragegame;
 
 
 public class PointItem extends ItemObject {
-    private int speed;
+    private int mSpeedY;
 
     public PointItem(int left, int top, int width, int height, int speed) {
         super(left, top, width, height);
@@ -10,10 +10,10 @@ public class PointItem extends ItemObject {
     }
 
     public void setSpeed(int speed) {
-        this.speed = speed;
+        this.mSpeedY = speed;
     }
 
     public void move() {
-        super.move(0, speed);
+        super.move(0, mSpeedY);
     }
 }

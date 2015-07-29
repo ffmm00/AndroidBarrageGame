@@ -1,13 +1,12 @@
 package com.fm_example.barragegame;
 
 public class StraightShoot extends BulletObject {
-    private int ySpeed;
 
-    public StraightShoot(int left, int top, int width, int height, int speed) {
-        super(left, top, width, height, speed);
+    public StraightShoot(int left, int top, int width, int height, int xSpeed, int ySpeed) {
+        super(left, top, width, height, 0, -ySpeed);
     }
 
     public void move() {
-        super.move(0, -ySpeed);
+        super.move(0, -mSpeedY);
     }
 }

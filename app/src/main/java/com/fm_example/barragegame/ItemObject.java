@@ -2,47 +2,47 @@ package com.fm_example.barragegame;
 
 public class ItemObject {
 
-    private int left;
-    private int top;
-    private int width;
-    private int height;
+    private int mLeft;
+    private int mTop;
+    private int mWidth;
+    private int mHeight;
 
     public ItemObject(int left, int top, int width, int height) {
         setLocate(left, top);
     }
 
     public void setLocate(int left, int top) {
-        this.left = left;
-        this.top = top;
+        this.mLeft = left;
+        this.mTop = top;
     }
 
     public void move(int left, int top) {
-        this.left = left;
-        this.top = top;
+        this.mLeft = left;
+        this.mTop = top;
     }
 
     public int getLeft() {
-        return left;
+        return mLeft;
     }
 
     public int getRight() {
-        return left + width;
+        return mLeft + mWidth;
     }
 
     public int getTop() {
-        return top;
+        return mTop;
     }
 
     public int getButton() {
-        return top + height;
+        return mTop + mHeight;
     }
 
     public int getCenterX() {
-        return (getLeft() + width / 2);
+        return (getLeft() + mWidth / 2);
     }
 
     public int getCenterY() {
-        return (getTop() + height / 2);
+        return (getTop() + mHeight / 2);
     }
 
 }

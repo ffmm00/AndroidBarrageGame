@@ -1,14 +1,12 @@
 package com.fm_example.barragegame;
 
 public class DiagonalBullet extends BulletObject {
-    private int xSpeed;
-    private int ySpeed;
 
-    public DiagonalBullet(int left, int top, int width, int height, int speed) {
-        super(left, top, width, height, speed);
+    public DiagonalBullet(int left, int top, int width, int height, int xSpeed, int ySpeed) {
+        super(left, top, width, height, xSpeed, ySpeed);
     }
 
     public void move() {
-        super.move(xSpeed, ySpeed);
+        super.move(mSpeedX, mSpeedY);
     }
 }

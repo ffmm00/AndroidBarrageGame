@@ -1,15 +1,18 @@
 package com.fm_example.barragegame;
 
 public class BulletObject extends ItemObject {
-    private int speed;
+    protected int mSpeedX;
+    protected int mSpeedY;
 
-    public BulletObject(int left, int top, int width, int height, int speed) {
+    public BulletObject(int left, int top, int width, int height, int xSpeed, int ySpeed) {
         super(left, top, width, height);
-        setSpeed(speed);
+        setSpeed(xSpeed, ySpeed);
     }
 
-    public void setSpeed(int speed) {
-        this.speed = speed;
+    public void setSpeed(int xSpeed, int ySpeed) {
+        this.mSpeedX = xSpeed;
+        this.mSpeedY = ySpeed;
     }
+
 
 }
