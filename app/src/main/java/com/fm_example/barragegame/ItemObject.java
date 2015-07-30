@@ -19,6 +19,7 @@ public class ItemObject {
     public void move(int left, int top) {
         this.mLeft = left + getLeft();
         this.mTop = top + getTop();
+
     }
 
     public int getLeft() {
