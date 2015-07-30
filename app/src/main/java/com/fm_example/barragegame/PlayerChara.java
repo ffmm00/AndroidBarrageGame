@@ -9,7 +9,7 @@ import android.widget.ImageView;
 
 public class PlayerChara extends ItemObject {
     private static final int SAFE_AREA = 20;
-    private Bitmap mBitmap = Bitmap.createBitmap(300, 300, Bitmap.Config.ARGB_8888);
+    private Bitmap mBitmap;
 
     public PlayerChara(int left, int top, int width, int height) {
         super(left, top, width, height);
