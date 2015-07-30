@@ -1,10 +1,23 @@
 package com.fm_example.barragegame;
 
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.widget.ImageView;
+
 public class PlayerChara extends ItemObject {
     private static final int SAFE_AREA = 20;
+    private Bitmap mBitmap = Bitmap.createBitmap(300, 300, Bitmap.Config.ARGB_8888);
 
     public PlayerChara(int left, int top, int width, int height) {
         super(left, top, width, height);
+    }
+
+    public void draw(Canvas canvas) {
+        //canvas=new Canvas(mBitmap);
+        //canvas.drawBitmap(R.mipmap.ic_launcher);
     }
 
     public void move(int role, int pitch) {

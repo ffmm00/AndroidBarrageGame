@@ -99,7 +99,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
             if (!((mIsClear) || (mIsFailed))) {
                 mPaint.setColor(Color.DKGRAY);
 
-                mCanvas.drawBitmap(mBitmapPlayer, mPlayer.getLeft(), mPlayer.getTop(), null);
+                // mCanvas.drawBitmap(mBitmapPlayer, mPlayer.getLeft(), mPlayer.getTop(), null);
             }
 
 
