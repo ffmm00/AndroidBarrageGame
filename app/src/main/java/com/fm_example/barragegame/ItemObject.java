@@ -9,6 +9,8 @@ public class ItemObject {
 
     public ItemObject(int left, int top, int width, int height) {
         setLocate(left, top);
+        this.mWidth = width;
+        this.mHeight = height;
     }
 
     public void setLocate(int left, int top) {
