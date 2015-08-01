@@ -9,9 +9,10 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Region;
+import android.os.Handler;
+import android.os.Message;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.TextureView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +24,11 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
     private static final int PLAYER_POS = 100;
     private static final int NO_OUTSIDE = 60;
     private static final int BULLET_ZONE = 10;
+    private static final int BULLETS = 13;
 
     private int mWidth;
     private int mHeight;
+    private int mSecond;
 
     private SurfaceHolder mHolder;
 
@@ -59,6 +62,8 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
 
     private HorizonalBullet mHorizonalBullet;
     private List<HorizonalBullet> mHorizonalBulletList = new ArrayList<HorizonalBullet>(20);
+    private HorizonalBulletRight mHorizonalBulletRight;
+    private List<HorizonalBulletRight> mHorizonalBulletRightList = new ArrayList<HorizonalBulletRight>(20);
 
     private List<BulletObject> mBulletList = new ArrayList<BulletObject>(20);
 
@@ -84,11 +89,10 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
 
         mRand = new Random();
 
-        BulletDeleteZone();
+
+        // BulletDeleteZone();
 
         newPlayer();
-
-        newHorizonalBullet();
 
         mIsAttached = true;
         mThread = new Thread(this);
@@ -140,6 +144,16 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
             mPlayer.setLocate(mWidth - (NO_OUTSIDE + 45), mPlayer.getTop());
         }
 
+        mSecond = (int) (((System.currentTimeMillis() - mStartTime)) / 1000) % 60;
+
+        if (mSecond % 5 == 0) {
+            newHorizonalBullet();
+        }
+
+        if (mSecond % 7 == 0 && mSecond % 5 != 0) {
+            newHorizonalBulletRight();
+        }
+
 
         try {
             for (HorizonalBullet horizonalBullet : mHorizonalBulletList) {
@@ -147,14 +161,32 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
                     horizonalBullet.move();
                 }
             }
+            for (HorizonalBulletRight horizonalBulletRight : mHorizonalBulletRightList) {
+                if (horizonalBulletRight != null) {
+                    horizonalBulletRight.move();
+                }
+            }
 
             mCanvas = getHolder().lockCanvas();
             mCanvas.drawColor(Color.LTGRAY);
 
 
-            for (HorizonalBullet horizonalBullet : mHorizonalBulletList) {
-                if (mRegionRightBulletZone.contains(horizonalBullet.getRight(), horizonalBullet.getButton())) {
-                    horizonalBullet.setLocate(0, horizonalBullet.getTop());
+            // for (HorizonalBullet horizonalBullet : mHorizonalBulletList) {
+            //     if (mRegionRightBulletZone.contains(horizonalBullet.getRight(), horizonalBullet.getButton())) {
+            //         horizonalBullet.setLocate(0, horizonalBullet.getTop());
+            //     }
+            // }
+
+            if (!mIsClear) {
+                for (BulletObject bulletObject : mHorizonalBulletList) {
+                    if (mPlayer.shotCheck(bulletObject)) {
+                        mIsFailed = true;
+                    }
+                }
+                for (BulletObject bulletObject : mHorizonalBulletRightList) {
+                    if (mPlayer.shotCheck(bulletObject)) {
+                        mIsFailed = true;
+                    }
                 }
             }
 
@@ -162,6 +194,9 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
                 mPaint.setColor(Color.DKGRAY);
                 for (HorizonalBullet horizonalBullet : mHorizonalBulletList) {
                     mCanvas.drawBitmap(mBitmapBullet, horizonalBullet.getLeft(), horizonalBullet.getTop(), null);
+                }
+                for (HorizonalBulletRight horizonalBulletRight : mHorizonalBulletRightList) {
+                    mCanvas.drawBitmap(mBitmapBullet, horizonalBulletRight.getLeft(), horizonalBulletRight.getTop(), null);
                 }
 
                 mPlayer.draw(mCanvas);
@@ -182,6 +217,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         score = (int) mEndTime * 100;
         return ("スコア" + score);
     }
+
 
     @Override
     public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
@@ -206,26 +242,43 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
                 BitmapFactory.decodeResource(getResources(), R.drawable.player));
         mIsClear = false;
         mIsFailed = false;
-        mStartTime = System.currentTimeMillis();
+        mStartTime = System.currentTimeMillis() * 1000;
     }
+
 
     private void newHorizonalBullet() {
         HorizonalBullet horizonalBullet;
 
         mHorizonalBulletList.clear();
 
-        for (int i = 0; i < 20; i++) {
-            int left = 0;
+        for (int i = 0; i < BULLETS; i++) {
+            int left = -mBitmapBullet.getWidth();
             int top = mRand.nextInt(mHeight);
 
-            int xSpeed = mRand.nextInt(8) + 3;
-
+            int xSpeed = mRand.nextInt(6) + 5;
             horizonalBullet = new HorizonalBullet(left, top, mBitmapBullet.getWidth(), mBitmapBullet.getHeight(), xSpeed, 0);
-
             mHorizonalBulletList.add(horizonalBullet);
-        }
 
+        }
+    }
+
+    private void newHorizonalBulletRight() {
+        HorizonalBulletRight horizonalBulletRight;
+
+        mHorizonalBulletRightList.clear();
+
+        for (int i = 0; i < BULLETS + 4; i++) {
+            int left = mWidth + mBitmapBullet.getWidth();
+            int top = mRand.nextInt(mHeight);
+
+            int xSpeed = mRand.nextInt(6) + 6;
+            horizonalBulletRight = new HorizonalBulletRight(left, top, mBitmapBullet.getWidth(), mBitmapBullet.getHeight(), xSpeed, 0);
+            mHorizonalBulletRightList.add(horizonalBulletRight);
+
+        }
     }
 
 
 }
+
+

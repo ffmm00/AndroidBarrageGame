@@ -4,7 +4,9 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
 public class PlayerChara extends ItemObject {
-    private static final int SAFE_AREA = 20;
+    private static final int SAFE_AREA = 35;
+    private static final int LIFE = 30;
+    private int mLifeCount = 0;
     private Bitmap mBitmap;
 
     public PlayerChara(int left, int top, int width, int height, Bitmap bitmap) {
@@ -25,8 +27,11 @@ public class PlayerChara extends ItemObject {
                 (this.getTop() + SAFE_AREA < bulletObject.getButton()) && (
                 this.getRight() - SAFE_AREA > bulletObject.getLeft()) &&
                 this.getButton() - SAFE_AREA > bulletObject.getTop()) {
-            return true;
+            mLifeCount++;
         }
+        if (LIFE == mLifeCount)
+            return true;
+
         return false;
     }
 
