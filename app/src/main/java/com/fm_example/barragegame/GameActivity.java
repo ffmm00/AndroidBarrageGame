@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Region;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -23,7 +24,9 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
     private static final int PLAYER_POS = 100;
     private static final int NO_OUTSIDE = 60;
     private static final int BULLET_ZONE = 10;
-    private static final int BULLETS = 13;
+    private static final int HORIZONAL_INTERVAL = 1600;
+    private static final int HORIZONAL_INTERVAL_RIGHT = 2200;
+    private static final int BULLETS = 6;
 
     private int mWidth;
     private int mHeight;
@@ -60,7 +63,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
     private BulletObject mBullet;
 
 
-    private List<BulletObject> mBulletList = new ArrayList<BulletObject>(15);
+    private List<BulletObject> mBulletList = new ArrayList<BulletObject>();
 
     private Random mRand;
 
@@ -138,16 +141,38 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
             mPlayer.setLocate(mWidth - (NO_OUTSIDE + 45), mPlayer.getTop());
         }
 
-        mSecond = (int) (((System.currentTimeMillis() - mStartTime)) / 1000) % 60;
+        //mSecond = (int) (((System.currentTimeMillis() - mStartTime))) / 1000;
+        mSecond = (int) ((System.currentTimeMillis() - mStartTime));
+        //mSecond = (int) ((System.currentTimeMillis() - mStartTime) / 1000) % 60;
 
+        // String a = "" + mSecond;
+        //Log.d("Test", a);
 
-        if (mSecond % 2 == 0)
+        if (mSecond % (HORIZONAL_INTERVAL + 93) == 0 || mSecond % (HORIZONAL_INTERVAL + 94) == 0 ||
+                mSecond % (HORIZONAL_INTERVAL + 95) == 0 || mSecond % (HORIZONAL_INTERVAL + 96) == 0 ||
+                mSecond % (HORIZONAL_INTERVAL + 97) == 0 || mSecond % (HORIZONAL_INTERVAL + 98) == 0 ||
+                mSecond % (HORIZONAL_INTERVAL + 99) == 0 || mSecond % (HORIZONAL_INTERVAL + 100) == 0 ||
+                mSecond % (HORIZONAL_INTERVAL + 101) == 0 || mSecond % (HORIZONAL_INTERVAL + 102) == 0 ||
+                mSecond % (HORIZONAL_INTERVAL + 103) == 0 || mSecond % (HORIZONAL_INTERVAL + 104) == 0 ||
+                mSecond % (HORIZONAL_INTERVAL + 105) == 0 || mSecond % (HORIZONAL_INTERVAL + 106) == 0 ||
+                mSecond % (HORIZONAL_INTERVAL + 107) == 0 || mSecond % (HORIZONAL_INTERVAL + 108) == 0 ||
+                mSecond % (HORIZONAL_INTERVAL + 109) == 0 || mSecond % (HORIZONAL_INTERVAL + 110) == 0) {
             newHorizonalBullet();
+        }
 
-        if (mSecond % 5 == 0) {
+        if (mSecond % (HORIZONAL_INTERVAL_RIGHT + 93) == 0 || mSecond % (HORIZONAL_INTERVAL_RIGHT + 94) == 0 ||
+                mSecond % (HORIZONAL_INTERVAL_RIGHT + 95) == 0 || mSecond % (HORIZONAL_INTERVAL_RIGHT + 96) == 0 ||
+                mSecond % (HORIZONAL_INTERVAL_RIGHT + 97) == 0 || mSecond % (HORIZONAL_INTERVAL_RIGHT + 98) == 0 ||
+                mSecond % (HORIZONAL_INTERVAL_RIGHT + 99) == 0 || mSecond % (HORIZONAL_INTERVAL_RIGHT + 100) == 0 ||
+                mSecond % (HORIZONAL_INTERVAL_RIGHT + 101) == 0 || mSecond % (HORIZONAL_INTERVAL_RIGHT + 102) == 0 ||
+                mSecond % (HORIZONAL_INTERVAL_RIGHT + 103) == 0 || mSecond % (HORIZONAL_INTERVAL_RIGHT + 104) == 0 ||
+                mSecond % (HORIZONAL_INTERVAL_RIGHT + 105) == 0 || mSecond % (HORIZONAL_INTERVAL_RIGHT + 106) == 0 ||
+                mSecond % (HORIZONAL_INTERVAL_RIGHT + 107) == 0 || mSecond % (HORIZONAL_INTERVAL_RIGHT + 108) == 0 ||
+                mSecond % (HORIZONAL_INTERVAL_RIGHT + 109) == 0 || mSecond % (HORIZONAL_INTERVAL_RIGHT + 110) == 0) {
             newHorizonalBulletRight();
         }
 
+        bulletDelete();
 
         try {
             for (BulletObject bulletObject : mBulletList) {
@@ -225,7 +250,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
                 BitmapFactory.decodeResource(getResources(), R.drawable.player));
         mIsClear = false;
         mIsFailed = false;
-        mStartTime = System.currentTimeMillis() * 1000;
+        mStartTime = System.currentTimeMillis();
     }
 
 
@@ -238,11 +263,11 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
             int left = -mBitmapBullet.getWidth();
             int top = mRand.nextInt(mHeight);
 
-            int xSpeed = mRand.nextInt(6) + 5;
+            int xSpeed = mRand.nextInt(6) + 4;
             horizonalBullet = new HorizonalBullet(left, top, mBitmapBullet.getWidth(), mBitmapBullet.getHeight(), xSpeed, 0);
             mBulletList.add(horizonalBullet);
-
         }
+
     }
 
     private void newHorizonalBulletRight() {
@@ -250,23 +275,23 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
 
         //mBulletList.clear();
 
-        for (int i = 0; i < BULLETS; i++) {
+        for (int i = 0; i < BULLETS + 1; i++) {
             int left = mWidth + mBitmapBullet.getWidth();
             int top = mRand.nextInt(mHeight);
 
-            int xSpeed = mRand.nextInt(6) + 6;
+            int xSpeed = mRand.nextInt(6) + 4;
             horizonalBullet = new HorizonalBullet(left, top, mBitmapBullet.getWidth(), mBitmapBullet.getHeight(), -xSpeed, 0);
             mBulletList.add(horizonalBullet);
 
         }
     }
 
-    private void BulletDelete() {
+    private void bulletDelete() {
         Iterator<BulletObject> bullet = mBulletList.iterator();
         while (bullet.hasNext()) {
             BulletObject bulletObject = bullet.next();
-            if (bulletObject.getLeft() == -mBitmapBullet.getWidth() * 2 ||
-                    bulletObject.getRight() == mWidth + mBitmapBullet.getWidth() * 2) {
+            if (bulletObject.getLeft() == -mBitmapBullet.getWidth() * 3 ||
+                    bulletObject.getRight() == mWidth + mBitmapBullet.getWidth() * 3) {
                 bullet.remove();
             }
         }
