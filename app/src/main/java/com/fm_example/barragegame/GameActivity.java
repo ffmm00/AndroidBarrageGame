@@ -148,29 +148,17 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         // String a = "" + mSecond;
         //Log.d("Test", a);
 
-        if (mSecond % (HORIZONAL_INTERVAL + 93) == 0 || mSecond % (HORIZONAL_INTERVAL + 94) == 0 ||
-                mSecond % (HORIZONAL_INTERVAL + 95) == 0 || mSecond % (HORIZONAL_INTERVAL + 96) == 0 ||
-                mSecond % (HORIZONAL_INTERVAL + 97) == 0 || mSecond % (HORIZONAL_INTERVAL + 98) == 0 ||
-                mSecond % (HORIZONAL_INTERVAL + 99) == 0 || mSecond % (HORIZONAL_INTERVAL + 100) == 0 ||
-                mSecond % (HORIZONAL_INTERVAL + 101) == 0 || mSecond % (HORIZONAL_INTERVAL + 102) == 0 ||
-                mSecond % (HORIZONAL_INTERVAL + 103) == 0 || mSecond % (HORIZONAL_INTERVAL + 104) == 0 ||
-                mSecond % (HORIZONAL_INTERVAL + 105) == 0 || mSecond % (HORIZONAL_INTERVAL + 106) == 0 ||
-                mSecond % (HORIZONAL_INTERVAL + 107) == 0 || mSecond % (HORIZONAL_INTERVAL + 108) == 0 ||
-                mSecond % (HORIZONAL_INTERVAL + 109) == 0 || mSecond % (HORIZONAL_INTERVAL + 110) == 0) {
-            newHorizonalBullet();
+
+        for (int i = HORIZONAL_INTERVAL + 93; i <= (HORIZONAL_INTERVAL + 110); i++) {
+            if (mSecond % i == 0)
+                newHorizonalBullet();
         }
 
-        if (mSecond % (HORIZONAL_INTERVAL_RIGHT + 93) == 0 || mSecond % (HORIZONAL_INTERVAL_RIGHT + 94) == 0 ||
-                mSecond % (HORIZONAL_INTERVAL_RIGHT + 95) == 0 || mSecond % (HORIZONAL_INTERVAL_RIGHT + 96) == 0 ||
-                mSecond % (HORIZONAL_INTERVAL_RIGHT + 97) == 0 || mSecond % (HORIZONAL_INTERVAL_RIGHT + 98) == 0 ||
-                mSecond % (HORIZONAL_INTERVAL_RIGHT + 99) == 0 || mSecond % (HORIZONAL_INTERVAL_RIGHT + 100) == 0 ||
-                mSecond % (HORIZONAL_INTERVAL_RIGHT + 101) == 0 || mSecond % (HORIZONAL_INTERVAL_RIGHT + 102) == 0 ||
-                mSecond % (HORIZONAL_INTERVAL_RIGHT + 103) == 0 || mSecond % (HORIZONAL_INTERVAL_RIGHT + 104) == 0 ||
-                mSecond % (HORIZONAL_INTERVAL_RIGHT + 105) == 0 || mSecond % (HORIZONAL_INTERVAL_RIGHT + 106) == 0 ||
-                mSecond % (HORIZONAL_INTERVAL_RIGHT + 107) == 0 || mSecond % (HORIZONAL_INTERVAL_RIGHT + 108) == 0 ||
-                mSecond % (HORIZONAL_INTERVAL_RIGHT + 109) == 0 || mSecond % (HORIZONAL_INTERVAL_RIGHT + 110) == 0) {
-            newHorizonalBulletRight();
+        for (int i = HORIZONAL_INTERVAL_RIGHT + 93; i <= (HORIZONAL_INTERVAL_RIGHT + 110); i++) {
+            if (mSecond % i == 0)
+                newHorizonalBulletRight();
         }
+
 
         bulletDelete();
 
