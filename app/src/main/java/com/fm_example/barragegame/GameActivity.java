@@ -26,7 +26,9 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
     private static final int BULLET_ZONE = 10;
     private static final int HORIZONAL_INTERVAL = 1600;
     private static final int HORIZONAL_INTERVAL_RIGHT = 2200;
-    private static final int BULLETS = 6;
+    private static final int BOSS_BULLET_INTERVAL = 1800;
+    private static final int PLAYER_BULLET_INTERVAL = 110;
+    private static final int BULLETS = 4;
 
     private int mWidth;
     private int mHeight;
@@ -47,6 +49,9 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
     private Paint mPaint = null;
     private Bitmap mBitmapPlayer;
     private PlayerChara mPlayer;
+    private BossChara mBoss;
+    private Bitmap mBitmapBoss;
+    private Bitmap mBitmapPlayerBullet;
 
     private Path mRightBulletZone;
     private Path mLeftBulletZone;
@@ -64,6 +69,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
 
 
     private List<BulletObject> mBulletList = new ArrayList<BulletObject>();
+    private List<StraightShoot> mPlayerBulletList = new ArrayList<StraightShoot>();
 
     private Random mRand;
 
@@ -83,13 +89,16 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         mHeight = getHeight();
         Resources rsc = getResources();
         mBitmapPlayer = BitmapFactory.decodeResource(rsc, R.drawable.player);
+        mBitmapBoss = BitmapFactory.decodeResource(rsc, R.drawable.boss);
         mBitmapBullet = BitmapFactory.decodeResource(rsc, R.drawable.minibullet);
+        mBitmapPlayerBullet = BitmapFactory.decodeResource(rsc, R.drawable.playerbullet);
 
         mRand = new Random();
 
         // BulletDeleteZone();
 
         newPlayer();
+        newBoss();
 
         mIsAttached = true;
         mThread = new Thread(this);
@@ -141,31 +150,58 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
             mPlayer.setLocate(mWidth - (NO_OUTSIDE + 45), mPlayer.getTop());
         }
 
-        //mSecond = (int) (((System.currentTimeMillis() - mStartTime))) / 1000;
         mSecond = (int) ((System.currentTimeMillis() - mStartTime));
-        //mSecond = (int) ((System.currentTimeMillis() - mStartTime) / 1000) % 60;
-
         // String a = "" + mSecond;
         //Log.d("Test", a);
 
 
-        for (int i = HORIZONAL_INTERVAL + 93; i <= (HORIZONAL_INTERVAL + 110); i++) {
+        for (int i = HORIZONAL_INTERVAL + 93; i <= (HORIZONAL_INTERVAL + 109); i++) {
             if (mSecond % i == 0)
                 newHorizonalBullet();
         }
 
-        for (int i = HORIZONAL_INTERVAL_RIGHT + 93; i <= (HORIZONAL_INTERVAL_RIGHT + 110); i++) {
+        for (int i = HORIZONAL_INTERVAL_RIGHT + 93; i <= (HORIZONAL_INTERVAL_RIGHT + 109); i++) {
             if (mSecond % i == 0)
                 newHorizonalBulletRight();
         }
 
+        for (int i = PLAYER_BULLET_INTERVAL + 93; i <= (PLAYER_BULLET_INTERVAL + 107); i++) {
+            if (mSecond % i == 0) {
+                newPlayerBullet();
+            }
+        }
+
+        for (int i = BOSS_BULLET_INTERVAL + 93; i <= (BOSS_BULLET_INTERVAL + 109); i++) {
+            if (mSecond % i == 0) {
+                newBossBulletRight();
+                newBossBulletLeft();
+            }
+        }
+
+
+        if (mBoss.getLeft() >= 30) {
+            mBoss.move(2);
+        }
+
+        if (mBoss.getRight() == mWidth - 30)
+            mBoss.setLocate(30, mBoss.getTop());
+
+
+        //String a = "" + mBoss.getLeft();
+        // Log.d("Test", a);
 
         bulletDelete();
+        bossTouchedBulletDelete();
 
         try {
             for (BulletObject bulletObject : mBulletList) {
                 if (bulletObject != null) {
                     bulletObject.move(bulletObject.mSpeedX, bulletObject.mSpeedY);
+                }
+            }
+            for (StraightShoot playershoot : mPlayerBulletList) {
+                if (playershoot != null) {
+                    playershoot.move(playershoot.mSpeedX, playershoot.mSpeedY);
                 }
             }
 
@@ -181,13 +217,26 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
 
 
             //衝突チェック
-            //  if (!mIsClear) {
-            //      for (BulletObject bulletObject : mBulletList) {
-            //          if (mPlayer.shotCheck(bulletObject)) {
-            //              mIsFailed = true;
-            //          }
-            //      }
-            //  }
+            if (!mIsClear) {
+                //弾に当たる
+                for (BulletObject bulletObject : mBulletList) {
+                    if (mPlayer.shotCheck(bulletObject)) {
+                        mIsFailed = true;
+                    }
+                }
+
+                //ボスに当たる
+                if (mPlayer.touchBoss(mBoss))
+                    mIsFailed = true;
+
+                //ボスに弾を当てる
+                for (StraightShoot straightShoot : mPlayerBulletList) {
+                    if (mBoss.shotCheck(straightShoot)) {
+                        mIsClear = true;
+                    }
+                }
+            }
+
 
             if (!((mIsClear) || (mIsFailed))) {
                 mPaint.setColor(Color.DKGRAY);
@@ -195,23 +244,26 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
                     mCanvas.drawBitmap(mBitmapBullet, bulletObject.getLeft(), bulletObject.getTop(), null);
                 }
 
-                mPlayer.draw(mCanvas);
+
+                for (StraightShoot playershoot : mPlayerBulletList) {
+                    mCanvas.drawBitmap(mBitmapPlayerBullet, playershoot.getLeft(), playershoot.getTop(), null);
+                }
             }
 
+            mPlayer.draw(mCanvas);
+            mBoss.draw(mCanvas);
 
             getHolder().unlockCanvasAndPost(mCanvas);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-
     }
+
 
     private String gameEnd() {
         mEndTime = System.currentTimeMillis();
-        long score = mEndTime - mStartTime;
-        score = (int) mEndTime * 100;
-        return ("スコア" + score);
+        return ("スコア");
     }
 
 
@@ -241,11 +293,14 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         mStartTime = System.currentTimeMillis();
     }
 
+    private void newBoss() {
+        mBoss = new BossChara(30, mBitmapBoss.getHeight(), mBitmapBoss.getWidth(), mBitmapBoss.getHeight(),
+                BitmapFactory.decodeResource(getResources(), R.drawable.boss));
+    }
+
 
     private void newHorizonalBullet() {
         BulletObject horizonalBullet;
-
-        //mBulletList.clear();
 
         for (int i = 0; i < BULLETS; i++) {
             int left = -mBitmapBullet.getWidth();
@@ -261,8 +316,6 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
     private void newHorizonalBulletRight() {
         BulletObject horizonalBullet;
 
-        //mBulletList.clear();
-
         for (int i = 0; i < BULLETS + 1; i++) {
             int left = mWidth + mBitmapBullet.getWidth();
             int top = mRand.nextInt(mHeight);
@@ -274,16 +327,59 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         }
     }
 
+    private void newBossBulletLeft() {
+        BulletObject bossBulletLeft;
+
+        int left = mBoss.getLeft() + 39;
+        int top = mBoss.getButton();
+        int ySpeed = 4;
+        bossBulletLeft = new StraightShoot(left, top, mBitmapBullet.getWidth(), mBitmapBullet.getHeight(), 0, ySpeed);
+        mBulletList.add(bossBulletLeft);
+    }
+
+    private void newBossBulletRight() {
+        BulletObject bossBulletRight;
+
+        int left = mBoss.getRight() - 82;
+        int top = mBoss.getButton();
+        int ySpeed = 4;
+        bossBulletRight = new StraightShoot(left, top, mBitmapBullet.getWidth(), mBitmapBullet.getHeight(), 0, ySpeed);
+        mBulletList.add(bossBulletRight);
+    }
+
+    private void newPlayerBullet() {
+        StraightShoot straightShoot;
+        int left = mPlayer.getLeft();
+        int top = mPlayer.getTop() - 8;
+        int ySpeed = 15;
+        straightShoot = new StraightShoot(left, top, mBitmapPlayerBullet.getWidth(), mBitmapPlayerBullet.getHeight(), 0, -ySpeed);
+        mPlayerBulletList.add(straightShoot);
+    }
+
+
     private void bulletDelete() {
         Iterator<BulletObject> bullet = mBulletList.iterator();
         while (bullet.hasNext()) {
             BulletObject bulletObject = bullet.next();
             if (bulletObject.getLeft() == -mBitmapBullet.getWidth() * 3 ||
-                    bulletObject.getRight() == mWidth + mBitmapBullet.getWidth() * 3) {
+                    bulletObject.getRight() == mWidth + mBitmapBullet.getWidth() * 3 ||
+                    bulletObject.getButton() == mHeight + mBitmapBullet.getHeight()) {
                 bullet.remove();
             }
         }
     }
 
+    private void bossTouchedBulletDelete() {
+        Iterator<StraightShoot> bullet = mPlayerBulletList.iterator();
+        while (bullet.hasNext()) {
+            StraightShoot straightShoot = bullet.next();
+            if ((mBoss.getLeft() < straightShoot.getRight()) &&
+                    (mBoss.getTop() < straightShoot.getButton()) &&
+                    (mBoss.getRight() > straightShoot.getLeft()) &&
+                    (mBoss.getButton() > straightShoot.getTop())) {
+                bullet.remove();
+            }
+        }
+    }
 
 }

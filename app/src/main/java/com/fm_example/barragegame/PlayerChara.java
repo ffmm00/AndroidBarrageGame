@@ -35,6 +35,19 @@ public class PlayerChara extends ItemObject {
         return false;
     }
 
+    public boolean touchBoss(BossChara bosschara) {
+        if ((this.getLeft() + SAFE_AREA < bosschara.getRight()) &&
+                (this.getTop() + SAFE_AREA < bosschara.getButton()) && (
+                this.getRight() - SAFE_AREA > bosschara.getLeft()) &&
+                this.getButton() - SAFE_AREA > bosschara.getTop()) {
+            mLifeCount += 10;
+        }
+        if (LIFE == mLifeCount)
+            return true;
+
+        return false;
+    }
+
 
     public boolean itemGetCheck(PointItem pointitem) {
         if ((this.getLeft() < pointitem.getRight()) &&
