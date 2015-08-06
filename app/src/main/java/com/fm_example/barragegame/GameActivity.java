@@ -1,6 +1,7 @@
 package com.fm_example.barragegame;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,22 +23,22 @@ import java.util.Random;
 public class GameActivity extends SurfaceView implements SurfaceHolder.Callback, Runnable {
 
     private static final int NO_OUTSIDE = 60;
-    private static final int BULLET_ZONE = 10;
-    private static final int HORIZONAL_INTERVAL = 1600;
-    private static final int HORIZONAL_INTERVAL_RIGHT = 2200;
-    private static final int BOSS_BULLET_INTERVAL = 1800;
-    private static final int PLAYER_BULLET_INTERVAL = 60;
     private static final int BULLETS = 4;
 
-    private static final int FIRST_BOSS_LIFE = 160;
-    private static final int PLAYER_LIFE = 50;
-    private static final int BASE_TIME = 90;
+    private static final int FIRST_BOSS_LIFE = 280;
+    private static final int PLAYER_LIFE = 40;
+    private static final int BASE_TIME = 110;
 
     private int mWidth;
     private int mHeight;
-    private int mSecond;
     private int mPlayerDamage;
     private int mBossDamage;
+
+    private int mPlayerBulletSecondSave;
+    private int mHorizonalBulletRightSecondSave;
+    private int mHorizonalBulletLeftSecondSave;
+    private int mBossBulletSecondSave;
+    private int mBossBulletSecondVerTwoSave;
 
     private SurfaceHolder mHolder;
 
@@ -58,15 +59,6 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
     private Bitmap mBitmapBoss;
     private Bitmap mBitmapPlayerBullet;
 
-    private Path mRightBulletZone;
-    private Path mLeftBulletZone;
-    private Path mTopBulletZone;
-    private Path mBottomBulletZone;
-
-    private Region mRegionRightBulletZone;
-    private Region mRegionLeftBulletZone;
-    private Region mRegionTopBulletZone;
-    private Region mRegionBottomBulletZone;
     private Region mRegionWholeScreen;
 
     private Bitmap mBitmapBullet;
@@ -100,8 +92,6 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
 
         mRand = new Random();
 
-        // BulletDeleteZone();
-
         newPlayer();
         newBoss();
 
@@ -117,18 +107,8 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         }
     }
 
-    private void BulletDeleteZone() {
+    private void GameEndScreen() {
         mRegionWholeScreen = new Region(0, 0, mWidth, mHeight);
-
-        mRightBulletZone = new Path();
-        mRightBulletZone.addRect(mWidth, 0, mWidth - BULLET_ZONE, mHeight, Path.Direction.CW);
-        mRegionRightBulletZone = new Region();
-        mRegionRightBulletZone.setPath(mRightBulletZone, mRegionWholeScreen);
-
-        mLeftBulletZone = new Path();
-        mLeftBulletZone.addRect(0, 0, BULLET_ZONE, mHeight, Path.Direction.CW);
-        mRegionRightBulletZone = new Region();
-        mRegionRightBulletZone.setPath(mRightBulletZone, mRegionWholeScreen);
 
         //x1 y1 x2 y2
     }
@@ -154,43 +134,51 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
             mPlayer.setLocate(mWidth - (NO_OUTSIDE + 45), mPlayer.getTop());
         }
 
-        mSecond = (int) ((System.currentTimeMillis() - mStartTime));
-        // String a = "" + mSecond;
+        int mSecond = (int) ((((System.currentTimeMillis() - mStartTime)) / 100) % 60);
+        //String a = "" + mSecond;
         //Log.d("Test", a);
 
-
-        for (int i = HORIZONAL_INTERVAL + 93; i <= (HORIZONAL_INTERVAL + 109); i++) {
-            if (mSecond % i == 0)
-                newHorizonalBullet();
+        if (mSecond == 0) {
+            mPlayerBulletSecondSave = 0;
+            mHorizonalBulletLeftSecondSave = 0;
+            mHorizonalBulletRightSecondSave = 0;
+            mBossBulletSecondSave = 0;
+            mBossBulletSecondVerTwoSave = 0;
         }
 
-        for (int i = HORIZONAL_INTERVAL_RIGHT + 93; i <= (HORIZONAL_INTERVAL_RIGHT + 109); i++) {
-            if (mSecond % i == 0)
-                newHorizonalBulletRight();
+        if (mSecond - mPlayerBulletSecondSave == 2) {
+            newPlayerBullet();
+            mPlayerBulletSecondSave = mSecond;
         }
 
-        for (int i = PLAYER_BULLET_INTERVAL + 85; i <= (PLAYER_BULLET_INTERVAL + 92); i++) {
-            if (mSecond % i == 0) {
-                newPlayerBullet();
-            }
+
+        if (mSecond - mHorizonalBulletLeftSecondSave == 14) {
+            newHorizonalBullet();
+            mHorizonalBulletLeftSecondSave = mSecond;
         }
 
-        for (int i = BOSS_BULLET_INTERVAL + 93; i <= (BOSS_BULLET_INTERVAL + 109); i++) {
-            if (mSecond % i == 0) {
-                newBossBulletRight();
-                newBossBulletLeft();
-            }
+        if (mSecond - mHorizonalBulletRightSecondSave == 17) {
+            newHorizonalBulletRight();
+            mHorizonalBulletRightSecondSave = mSecond;
         }
+
+        if (mSecond - mBossBulletSecondSave == 12) {
+            newBossBulletLeft();
+            newBossBulletRight();
+            mBossBulletSecondSave = mSecond;
+        }
+
 
         if (mIsBossPowerUp) {
             mBoss.move(3);
-            for (int i = BOSS_BULLET_INTERVAL + 93; i <= (BOSS_BULLET_INTERVAL + 109); i++) {
-                if (mSecond % i == 0) {
-                    newBossDiagnalBulletLeft();
-                    newBossDiagnalBulletRight();
-                    newBossBulletCenter();
-                }
+            if (mSecond - mBossBulletSecondVerTwoSave == 11) {
+                newBossDiagnalBulletLeft();
+                newBossDiagnalBulletRight();
+                newBossBulletCenter();
+                mBossBulletSecondVerTwoSave = mSecond;
             }
+
+
         }
 
         if (mBoss.getLeft() >= 30) {
@@ -199,9 +187,6 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         if (mBoss.getRight() >= mWidth - 30)
             mBoss.setLocate(30, mBoss.getTop());
 
-
-        //String a = "" + ;
-        // Log.d("Test", a);
 
         bulletDelete();
         bossTouchedBulletDelete();
@@ -222,13 +207,6 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
             mCanvas.drawColor(Color.LTGRAY);
 
 
-            // for (HorizonalBullet horizonalBullet : mHorizonalBulletList) {
-            //     if (mRegionRightBulletZone.contains(horizonalBullet.getRight(), horizonalBullet.getButton())) {
-            //         horizonalBullet.setLocate(0, horizonalBullet.getTop());
-            //     }
-            // }
-
-
             //衝突チェック
             if (!mIsClear) {
                 //弾に当たる
@@ -246,7 +224,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
                 //ボスに弾を当てる
                 for (StraightShoot straightShoot : mPlayerBulletList) {
                     mBossDamage = mBoss.shotCheck(straightShoot);
-                    if (mBoss.shotCheck(straightShoot) == FIRST_BOSS_LIFE / 2)
+                    if (mBoss.shotCheck(straightShoot) >= FIRST_BOSS_LIFE / 2)
                         mIsBossPowerUp = true;
                     if (mBoss.shotCheck(straightShoot) >= FIRST_BOSS_LIFE) {
                         mIsClear = true;
@@ -254,10 +232,25 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
                 }
             }
 
+            if (mIsClear) {
+                String msg = "ゲームクリア";
+                mPaint.setColor(Color.BLACK);
+                mPaint.setTextSize(50);
+                mCanvas.drawText(msg, mWidth / 2 - 100, mHeight / 2 - 50, mPaint);
+            }
+
+            if (mIsFailed) {
+                String msg = "攻略失敗";
+                mPaint.setTextSize(50);
+                mPaint.setColor(Color.BLACK);
+                mCanvas.drawText(msg, mWidth / 2 - 100, mHeight / 2 - 50, mPaint);
+            }
+
             if (mIsClear || mIsFailed) {
                 String msg = gameScore();
+                mPaint.setTextSize(50);
                 mPaint.setColor(Color.BLACK);
-                mCanvas.drawText(msg, mWidth / 2 - 50, mHeight / 2, mPaint);
+                mCanvas.drawText(msg, mWidth / 2 - 120, mHeight / 2 + 10, mPaint);
             }
 
 
@@ -286,9 +279,9 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
     private String gameScore() {
         int mScore = (int) (((System.currentTimeMillis() - mStartTime)) / 1000) % 60;
         mScore = BASE_TIME - mScore;
-        mScore *= 300;
+        mScore *= 200;
         mScore -= mPlayerDamage * 200;
-        mScore += mBossDamage * 50;
+        mScore += mBossDamage * 150;
         if (mIsFailed)
             mScore /= 5;
         if (mIsClear)
@@ -302,6 +295,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
     @Override
     public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
     }
+
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
@@ -413,7 +407,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
 
     private void newPlayerBullet() {
         StraightShoot straightShoot;
-        int left = mPlayer.getLeft() + 6;
+        int left = mPlayer.getLeft() + 13;
         int top = mPlayer.getTop() - 8;
         int ySpeed = 15;
         straightShoot = new StraightShoot(left, top, mBitmapPlayerBullet.getWidth(), mBitmapPlayerBullet.getHeight(), 0, -ySpeed);
@@ -425,7 +419,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         Iterator<BulletObject> bullet = mBulletList.iterator();
         while (bullet.hasNext()) {
             BulletObject bulletObject = bullet.next();
-            if (bulletObject.getButton() == -mBitmapBullet.getWidth() * 3 ||
+            if (bulletObject.getButton() == -mBitmapBullet.getHeight() * 3 ||
                     bulletObject.getLeft() == -mBitmapBullet.getWidth() * 3 ||
                     bulletObject.getRight() == mWidth + mBitmapBullet.getWidth() * 3 ||
                     bulletObject.getTop() == mHeight + mBitmapBullet.getHeight()) {
