@@ -5,9 +5,12 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.WindowManager;
+import android.media.MediaPlayer;
 
 public class CharacterMove extends ActionBarActivity implements SensorEventListener {
 
@@ -20,6 +23,7 @@ public class CharacterMove extends ActionBarActivity implements SensorEventListe
     private float[] mgValues = new float[3];
     private float[] acValues = new float[3];
 
+
     public static int pitch = 0;
     public static int role = 0;
 
@@ -27,6 +31,8 @@ public class CharacterMove extends ActionBarActivity implements SensorEventListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+
         mSurfaceView = new GameActivity(this);
         setContentView(mSurfaceView);
 
@@ -34,6 +40,7 @@ public class CharacterMove extends ActionBarActivity implements SensorEventListe
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMagField = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
     }
+
 
     @Override
     protected void onResume() {

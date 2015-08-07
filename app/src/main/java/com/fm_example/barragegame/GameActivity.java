@@ -1,5 +1,6 @@
 package com.fm_example.barragegame;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -10,7 +11,11 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Region;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -18,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+
+import android.media.MediaPlayer;
 
 
 public class GameActivity extends SurfaceView implements SurfaceHolder.Callback, Runnable {
@@ -59,28 +66,47 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
     private Bitmap mBitmapBoss;
     private Bitmap mBitmapPlayerBullet;
 
+    private Path mGameEnd;
+    private Region mRegionGameEnd;
     private Region mRegionWholeScreen;
+
+    private SoundPool mSoundPool;
+
+    private int mDamage = 0;
+
 
     private Bitmap mBitmapBullet;
     private BulletObject mBullet;
-
 
     private List<BulletObject> mBulletList = new ArrayList<BulletObject>();
     private List<StraightShoot> mPlayerBulletList = new ArrayList<StraightShoot>();
 
     private Random mRand;
 
+
     public GameActivity(Context context) {
         super(context);
+
+        mSoundPool = new SoundPool.Builder()
+                .setAudioAttributes(new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_GAME)
+                        .build())
+                .setMaxStreams(6)
+                .build();
+
+        mDamage = mSoundPool.load(context, R.raw.damaged, 1);
+
         mHolder = getHolder();
         mHolder.addCallback(this);
     }
+
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         mPaint = new Paint();
         mPaint.setColor(Color.RED);
         mPaint.setAntiAlias(true);
+
 
         mWidth = getWidth();
         mHeight = getHeight();
@@ -105,12 +131,6 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         while (mIsAttached) {
             drawGameBoard();
         }
-    }
-
-    private void GameEndScreen() {
-        mRegionWholeScreen = new Region(0, 0, mWidth, mHeight);
-
-        //x1 y1 x2 y2
     }
 
 
@@ -212,6 +232,9 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
                 //弾に当たる
                 for (BulletObject bulletObject : mBulletList) {
                     mPlayerDamage = mPlayer.shotCheck(bulletObject);
+
+                    mSoundPool.play(mDamage, 1.0f, 1.0f, 0, 0, 1);
+
                     if (mPlayer.shotCheck(bulletObject) >= PLAYER_LIFE) {
                         mIsFailed = true;
                     }
@@ -272,7 +295,26 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    private void gameEnd() {
+        mRegionWholeScreen = new Region(0, 0, mWidth, mHeight);
+        mGameEnd = new Path();
+        mGameEnd.addRect(mWidth / 2 - 120, mHeight / 2 + 30, mWidth / 2, mHeight / 2 + 50, Path.Direction.CW);
+        mRegionGameEnd = new Region();
+        mRegionGameEnd.setPath(mGameEnd, mRegionWholeScreen);
+    }
+
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                if (mRegionGameEnd.contains((int) event.getX(), (int) event.getY())) {
+                }
+                break;
+            default:
+                break;
+        }
+        return true;
     }
 
 

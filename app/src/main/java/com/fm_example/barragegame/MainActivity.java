@@ -7,19 +7,34 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.media.MediaPlayer;
 
 
 public class MainActivity extends ActionBarActivity {
+
+    private MediaPlayer mOpening;
+    private MediaPlayer mStageOne;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mOpening = MediaPlayer.create(this, R.raw.theme);
+        mStageOne = MediaPlayer.create(this, R.raw.stagefirst);
+
+        this.mOpening.setLooping(true);
+
+        mOpening.start();
+
+
         Button btnNext = (Button) this.findViewById(R.id.button);
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mOpening.stop();
+                mStageOne.setLooping(true);
+                mStageOne.start();
                 Intent intent = new Intent(MainActivity.this, CharacterMove.class);
                 startActivity(intent);
             }
