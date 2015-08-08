@@ -23,6 +23,7 @@ public class MainActivity extends ActionBarActivity {
         mOpening = MediaPlayer.create(this, R.raw.theme);
         mStageOne = MediaPlayer.create(this, R.raw.stagefirst);
 
+
         this.mOpening.setLooping(true);
 
         mOpening.start();

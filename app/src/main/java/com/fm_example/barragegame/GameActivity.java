@@ -14,6 +14,8 @@ import android.graphics.Region;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -25,9 +27,11 @@ import java.util.List;
 import java.util.Random;
 
 import android.media.MediaPlayer;
+import android.view.WindowManager;
 
 
 public class GameActivity extends SurfaceView implements SurfaceHolder.Callback, Runnable {
+
 
     private static final int NO_OUTSIDE = 60;
     private static final int BULLETS = 4;
@@ -72,7 +76,8 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
 
     private SoundPool mSoundPool;
 
-    private int mDamage = 0;
+    private MediaPlayer mStageOne;
+    private int mDamage;
 
 
     private Bitmap mBitmapBullet;
@@ -83,17 +88,10 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
 
     private Random mRand;
 
-
     public GameActivity(Context context) {
         super(context);
 
-        mSoundPool = new SoundPool.Builder()
-                .setAudioAttributes(new AudioAttributes.Builder()
-                        .setUsage(AudioAttributes.USAGE_GAME)
-                        .build())
-                .setMaxStreams(6)
-                .build();
-
+        SoundPool mSoundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
         mDamage = mSoundPool.load(context, R.raw.damaged, 1);
 
         mHolder = getHolder();
@@ -108,6 +106,8 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         mPaint.setAntiAlias(true);
 
 
+        //getContext().startActivity(new Intent(getContext(), MainActivity.class));
+
         mWidth = getWidth();
         mHeight = getHeight();
         Resources rsc = getResources();
@@ -117,6 +117,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         mBitmapPlayerBullet = BitmapFactory.decodeResource(rsc, R.drawable.playerbullet);
 
         mRand = new Random();
+        gameEnd();
 
         newPlayer();
         newBoss();
@@ -231,9 +232,11 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
             if (!mIsClear) {
                 //弾に当たる
                 for (BulletObject bulletObject : mBulletList) {
-                    mPlayerDamage = mPlayer.shotCheck(bulletObject);
 
-                    mSoundPool.play(mDamage, 1.0f, 1.0f, 0, 0, 1);
+                    //ここに効果音を付ける
+                    mSoundPool.play(mDamage, 1.0F, 1.0F, 0, 0, 1.0F);
+
+                    mPlayerDamage = mPlayer.shotCheck(bulletObject);
 
                     if (mPlayer.shotCheck(bulletObject) >= PLAYER_LIFE) {
                         mIsFailed = true;
@@ -274,6 +277,9 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
                 mPaint.setTextSize(50);
                 mPaint.setColor(Color.BLACK);
                 mCanvas.drawText(msg, mWidth / 2 - 120, mHeight / 2 + 10, mPaint);
+
+                String endmsg = "タイトルに戻る";
+                mCanvas.drawText(endmsg, mWidth / 2 - 120, mHeight / 2 + 140, mPaint);
             }
 
 
@@ -297,18 +303,24 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         }
     }
 
+
     private void gameEnd() {
         mRegionWholeScreen = new Region(0, 0, mWidth, mHeight);
         mGameEnd = new Path();
-        mGameEnd.addRect(mWidth / 2 - 120, mHeight / 2 + 30, mWidth / 2, mHeight / 2 + 50, Path.Direction.CW);
+        mGameEnd.addRect(mWidth / 2 - 120, mHeight / 2 + 40, mWidth * 2 / 3, mHeight / 2 + 240, Path.Direction.CW);
         mRegionGameEnd = new Region();
         mRegionGameEnd.setPath(mGameEnd, mRegionWholeScreen);
     }
 
+
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (mRegionGameEnd.contains((int) event.getX(), (int) event.getY())) {
+                if (mIsClear || mIsFailed) {
+                    if (mRegionGameEnd.contains((int) event.getX(), (int) event.getY())) {
+                        Intent i = new Intent(getContext(), MainActivity.class);
+                        getContext().startActivity(i);
+                    }
                 }
                 break;
             default:
