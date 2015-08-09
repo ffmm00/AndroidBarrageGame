@@ -1,5 +1,6 @@
 package com.fm_example.barragegame;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -10,10 +11,9 @@ import android.widget.Button;
 import android.media.MediaPlayer;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends Activity {
 
     private MediaPlayer mOpening;
-    private MediaPlayer mStageOne;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,8 +21,6 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         mOpening = MediaPlayer.create(this, R.raw.theme);
-        mStageOne = MediaPlayer.create(this, R.raw.stagefirst);
-
 
         this.mOpening.setLooping(true);
 
@@ -34,8 +32,6 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 mOpening.stop();
-                mStageOne.setLooping(true);
-                mStageOne.start();
                 Intent intent = new Intent(MainActivity.this, CharacterMove.class);
                 startActivity(intent);
             }

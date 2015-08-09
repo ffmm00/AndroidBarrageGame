@@ -1,5 +1,6 @@
 package com.fm_example.barragegame;
 
+import android.app.Activity;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -12,7 +13,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.WindowManager;
 import android.media.MediaPlayer;
 
-public class CharacterMove extends ActionBarActivity implements SensorEventListener {
+public class CharacterMove extends Activity implements SensorEventListener {
 
     private GameActivity mSurfaceView;
     private SensorManager mSensorManager;

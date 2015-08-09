@@ -17,6 +17,7 @@ public class PlayerChara extends ItemObject {
         canvas.drawBitmap(mBitmap, getLeft(), getTop(), null);
     }
 
+
     public void move(int role, int pitch) {
         super.move(role / 2, -(pitch / 2));
     }
