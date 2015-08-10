@@ -66,10 +66,6 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
 
     private Path mGameEnd;
     private Region mRegionGameEnd;
-    private Path mPlayerDelete;
-    private Region mRegionPlayerDelete;
-    private Path mBossDelete;
-    private Region mRegionBossDelete;
 
     private Region mRegionWholeScreen;
 
@@ -112,10 +108,10 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         mWidth = getWidth();
         mHeight = getHeight();
         Resources rsc = getResources();
-        mBitmapPlayer = BitmapFactory.decodeResource(rsc, R.drawable.player);
-        mBitmapBoss = BitmapFactory.decodeResource(rsc, R.drawable.boss);
-        mBitmapBullet = BitmapFactory.decodeResource(rsc, R.drawable.minibullet);
-        mBitmapPlayerBullet = BitmapFactory.decodeResource(rsc, R.drawable.playerbullet);
+        mBitmapPlayer = BitmapFactory.decodeResource(rsc, R.drawable.newchara);
+        mBitmapBoss = BitmapFactory.decodeResource(rsc, R.drawable.newboss_1);
+        mBitmapBullet = BitmapFactory.decodeResource(rsc, R.drawable.newbullet);
+        mBitmapPlayerBullet = BitmapFactory.decodeResource(rsc, R.drawable.newplayerbullet);
         mStageOne = MediaPlayer.create(getContext(), R.raw.stagefirst);
 
         this.mStageOne.setLooping(true);
@@ -230,86 +226,88 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
             }
 
             mCanvas = getHolder().lockCanvas();
-            mCanvas.drawColor(Color.LTGRAY);
+            if (mCanvas != null) {
+                mCanvas.drawColor(Color.LTGRAY);
 
 
-            //衝突チェック
-            if (!mIsClear) {
-                //弾に当たる
-                for (BulletObject bulletObject : mBulletList) {
+                //衝突チェック
+                if (!mIsClear) {
+                    //弾に当たる
+                    for (BulletObject bulletObject : mBulletList) {
 
-                    int temp = mPlayerDamage;
-                    mPlayerDamage = mPlayer.shotCheck(bulletObject);
-                    if (temp < mPlayerDamage) {
-                        mSoundPool.play(mDamage, 1.0F, 1.0F, 0, 0, 1.0F);
-                        temp = mPlayerDamage;
+                        int temp = mPlayerDamage;
+                        mPlayerDamage = mPlayer.shotCheck(bulletObject);
+                        if (temp < mPlayerDamage) {
+                            mSoundPool.play(mDamage, 1.0F, 1.0F, 0, 0, 1.0F);
+                            temp = mPlayerDamage;
+                        }
+
+                        if (mPlayer.shotCheck(bulletObject) >= PLAYER_LIFE) {
+                            mIsFailed = true;
+                        }
+                    }
+                }
+
+                //ボスに当たる
+                if (mPlayer.touchBoss(mBoss) >= PLAYER_LIFE)
+                    mIsFailed = true;
+
+                //ボスに弾を当てる
+                for (StraightShoot straightShoot : mPlayerBulletList) {
+                    mBossDamage = mBoss.shotCheck(straightShoot);
+                    if (mBoss.shotCheck(straightShoot) >= FIRST_BOSS_LIFE / 2)
+                        mIsBossPowerUp = true;
+                    if (mBoss.shotCheck(straightShoot) >= FIRST_BOSS_LIFE) {
+                        mIsClear = true;
+                    }
+                }
+
+                if (mIsClear) {
+                    mSoundPool.play(mClear, 2.0F, 2.0F, 0, 0, 1.0F);
+                    String msg = "ゲームクリア";
+                    mPaint.setColor(Color.BLACK);
+                    mPaint.setTextSize(50);
+                    mCanvas.drawText(msg, mWidth / 2 - 100, mHeight / 2 - 50, mPaint);
+                }
+
+                if (mIsFailed) {
+                    mSoundPool.play(mFail, 2.0F, 2.0F, 0, 0, 1.0F);
+                    String msg = "攻略失敗";
+                    mPaint.setTextSize(50);
+                    mPaint.setColor(Color.BLACK);
+                    mCanvas.drawText(msg, mWidth / 2 - 100, mHeight / 2 - 50, mPaint);
+                }
+
+                if (mIsClear || mIsFailed) {
+                    String msg = gameScore();
+                    mPaint.setTextSize(50);
+                    mPaint.setColor(Color.BLACK);
+                    mCanvas.drawText(msg, mWidth / 2 - 120, mHeight / 2 + 10, mPaint);
+                    String endmsg = "タイトルに戻る";
+                    mCanvas.drawText(endmsg, mWidth / 2 - 120, mHeight / 2 + 140, mPaint);
+
+                    mPaint.setColor(Color.DKGRAY);
+                    mCanvas.drawPath(mGameEnd, mPaint);
+
+                }
+
+
+                if (!((mIsClear) || (mIsFailed))) {
+                    mPaint.setColor(Color.DKGRAY);
+                    for (BulletObject bulletObject : mBulletList) {
+                        mCanvas.drawBitmap(mBitmapBullet, bulletObject.getLeft(), bulletObject.getTop(), null);
                     }
 
-                    if (mPlayer.shotCheck(bulletObject) >= PLAYER_LIFE) {
-                        mIsFailed = true;
+                    for (StraightShoot playershoot : mPlayerBulletList) {
+                        mCanvas.drawBitmap(mBitmapPlayerBullet, playershoot.getLeft(), playershoot.getTop(), null);
                     }
                 }
+
+                mPlayer.draw(mCanvas);
+                mBoss.draw(mCanvas);
+
+                getHolder().unlockCanvasAndPost(mCanvas);
             }
-
-            //ボスに当たる
-            if (mPlayer.touchBoss(mBoss) >= PLAYER_LIFE)
-                mIsFailed = true;
-
-            //ボスに弾を当てる
-            for (StraightShoot straightShoot : mPlayerBulletList) {
-                mBossDamage = mBoss.shotCheck(straightShoot);
-                if (mBoss.shotCheck(straightShoot) >= FIRST_BOSS_LIFE / 2)
-                    mIsBossPowerUp = true;
-                if (mBoss.shotCheck(straightShoot) >= FIRST_BOSS_LIFE) {
-                    mIsClear = true;
-                }
-            }
-
-            if (mIsClear) {
-                mSoundPool.play(mClear, 2.0F, 2.0F, 0, 0, 1.0F);
-                String msg = "ゲームクリア";
-                mPaint.setColor(Color.BLACK);
-                mPaint.setTextSize(50);
-                mCanvas.drawText(msg, mWidth / 2 - 100, mHeight / 2 - 50, mPaint);
-            }
-
-            if (mIsFailed) {
-                mSoundPool.play(mFail, 2.0F, 2.0F, 0, 0, 1.0F);
-                String msg = "攻略失敗";
-                mPaint.setTextSize(50);
-                mPaint.setColor(Color.BLACK);
-                mCanvas.drawText(msg, mWidth / 2 - 100, mHeight / 2 - 50, mPaint);
-            }
-
-            if (mIsClear || mIsFailed) {
-                String msg = gameScore();
-                mPaint.setTextSize(50);
-                mPaint.setColor(Color.BLACK);
-                mCanvas.drawText(msg, mWidth / 2 - 120, mHeight / 2 + 10, mPaint);
-                String endmsg = "タイトルに戻る";
-                mCanvas.drawText(endmsg, mWidth / 2 - 120, mHeight / 2 + 140, mPaint);
-
-                mPaint.setColor(Color.DKGRAY);
-                mCanvas.drawPath(mGameEnd, mPaint);
-
-            }
-
-
-            if (!((mIsClear) || (mIsFailed))) {
-                mPaint.setColor(Color.DKGRAY);
-                for (BulletObject bulletObject : mBulletList) {
-                    mCanvas.drawBitmap(mBitmapBullet, bulletObject.getLeft(), bulletObject.getTop(), null);
-                }
-
-                for (StraightShoot playershoot : mPlayerBulletList) {
-                    mCanvas.drawBitmap(mBitmapPlayerBullet, playershoot.getLeft(), playershoot.getTop(), null);
-                }
-            }
-
-            mPlayer.draw(mCanvas);
-            mBoss.draw(mCanvas);
-
-            getHolder().unlockCanvasAndPost(mCanvas);
         } catch (
                 Exception e
                 )
@@ -379,13 +377,14 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
             mBitmapBullet.recycle();
             mBitmapBullet = null;
         }
+        mStageOne.stop();
         mIsAttached = false;
         while (mThread.isAlive()) ;
     }
 
     private void newPlayer() {
         mPlayer = new PlayerChara(mWidth / 2, mHeight / 2, mBitmapPlayer.getWidth(), mBitmapPlayer.getHeight(),
-                BitmapFactory.decodeResource(getResources(), R.drawable.player));
+                BitmapFactory.decodeResource(getResources(), R.drawable.newchara));
         mIsClear = false;
         mIsFailed = false;
         mStartTime = System.currentTimeMillis();
@@ -393,7 +392,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
 
     private void newBoss() {
         mBoss = new BossFirst(30, mBitmapBoss.getHeight(), mBitmapBoss.getWidth(), mBitmapBoss.getHeight(),
-                BitmapFactory.decodeResource(getResources(), R.drawable.boss));
+                BitmapFactory.decodeResource(getResources(), R.drawable.newboss_1));
     }
 
 
@@ -479,7 +478,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
 
     private void newPlayerBullet() {
         StraightShoot straightShoot;
-        int left = mPlayer.getLeft() + 13;
+        int left = mPlayer.getLeft() + 36;
         int top = mPlayer.getTop() - 8;
         int ySpeed = 15;
         straightShoot = new StraightShoot(left, top, mBitmapPlayerBullet.getWidth(), mBitmapPlayerBullet.getHeight(), 0, -ySpeed);

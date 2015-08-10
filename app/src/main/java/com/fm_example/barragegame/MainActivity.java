@@ -22,7 +22,7 @@ public class MainActivity extends Activity {
 
         mOpening = MediaPlayer.create(this, R.raw.theme);
 
-        this.mOpening.setLooping(true);
+        mOpening.setLooping(true);
 
         mOpening.start();
 
