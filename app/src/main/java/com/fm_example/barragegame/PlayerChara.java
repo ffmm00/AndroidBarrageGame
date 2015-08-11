@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
 public class PlayerChara extends ItemObject {
-    private static final int SAFE_AREA = 35;
+    private static final int SAFE_AREA = 46;
     private int mLifeCount = 0;
     private Bitmap mBitmap;
 

@@ -31,8 +31,8 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
     private static final int BULLETS = 5;
 
     private static final int FIRST_BOSS_LIFE = 280;
-    private static final int PLAYER_LIFE = 40;
-    private static final int BASE_TIME = 110;
+    private static final int PLAYER_LIFE = 50;
+    private static final int BASE_TIME = 120;
 
     private int mWidth;
     private int mHeight;
@@ -63,6 +63,8 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
     private BossFirst mBoss;
     private Bitmap mBitmapBoss;
     private Bitmap mBitmapPlayerBullet;
+    private Bitmap mBitmapButton;
+    private Image mButton;
 
     private Path mGameEnd;
     private Region mRegionGameEnd;
@@ -88,7 +90,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
     public GameActivity(Context context) {
         super(context);
 
-        mSoundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
+        mSoundPool = new SoundPool(6, AudioManager.STREAM_MUSIC, 0);
         mDamage = mSoundPool.load(context, R.raw.damagesound, 1);
         mFail = mSoundPool.load(context, R.raw.failedsound, 1);
         mClear = mSoundPool.load(context, R.raw.clearedsound, 1);
@@ -108,10 +110,11 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         mWidth = getWidth();
         mHeight = getHeight();
         Resources rsc = getResources();
-        mBitmapPlayer = BitmapFactory.decodeResource(rsc, R.drawable.newchara);
-        mBitmapBoss = BitmapFactory.decodeResource(rsc, R.drawable.newboss_1);
+        mBitmapPlayer = BitmapFactory.decodeResource(rsc, R.drawable.player_2);
+        mBitmapBoss = BitmapFactory.decodeResource(rsc, R.drawable.boss_1);
         mBitmapBullet = BitmapFactory.decodeResource(rsc, R.drawable.newbullet);
-        mBitmapPlayerBullet = BitmapFactory.decodeResource(rsc, R.drawable.newplayerbullet);
+        mBitmapPlayerBullet = BitmapFactory.decodeResource(rsc, R.drawable.playerbullet2);
+        mBitmapButton = BitmapFactory.decodeResource(rsc, R.drawable.button_1);
         mStageOne = MediaPlayer.create(getContext(), R.raw.stagefirst);
 
         this.mStageOne.setLooping(true);
@@ -121,6 +124,8 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
 
         newPlayer();
         newBoss();
+        newButton();
+
         gameEndScreen();
 
         mIsAttached = true;
@@ -144,16 +149,16 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         mPlayer.move(CharacterMove.role, CharacterMove.pitch);
 
         if (mPlayer.getButton() > mHeight) {
-            mPlayer.setLocate(mPlayer.getLeft(), mHeight - NO_OUTSIDE - 125);
+            mPlayer.setLocate(mPlayer.getLeft(), mHeight - (NO_OUTSIDE + 80));
         }
         if (mPlayer.getTop() < 0) {
-            mPlayer.setLocate(mPlayer.getLeft(), NO_OUTSIDE + 20);
+            mPlayer.setLocate(mPlayer.getLeft(), 1);
         }
         if (mPlayer.getLeft() < 0) {
-            mPlayer.setLocate(NO_OUTSIDE - 10, mPlayer.getTop());
+            mPlayer.setLocate(1, mPlayer.getTop());
         }
         if (mPlayer.getRight() > mWidth) {
-            mPlayer.setLocate(mWidth - (NO_OUTSIDE + 45), mPlayer.getTop());
+            mPlayer.setLocate(mWidth - (NO_OUTSIDE + 74), mPlayer.getTop());
         }
 
         int mSecond = (int) ((((System.currentTimeMillis() - mStartTime)) / 100) % 60);
@@ -279,15 +284,13 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
                 }
 
                 if (mIsClear || mIsFailed) {
+                    mButton.draw(mCanvas);
                     String msg = gameScore();
                     mPaint.setTextSize(50);
                     mPaint.setColor(Color.BLACK);
                     mCanvas.drawText(msg, mWidth / 2 - 120, mHeight / 2 + 10, mPaint);
                     String endmsg = "タイトルに戻る";
                     mCanvas.drawText(endmsg, mWidth / 2 - 120, mHeight / 2 + 140, mPaint);
-
-                    mPaint.setColor(Color.DKGRAY);
-                    mCanvas.drawPath(mGameEnd, mPaint);
 
                 }
 
@@ -322,7 +325,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
     private void gameEndScreen() {
         mRegionWholeScreen = new Region(0, 0, mWidth, mHeight);
         mGameEnd = new Path();
-        mGameEnd.addRect(mWidth / 2 - 120, mHeight / 2 + 160, mWidth * 2 / 3, mHeight / 2 + 270, Path.Direction.CW);
+        mGameEnd.addRect(mWidth / 2 - 120, mHeight / 2 + 160, mWidth * 2 / 3 + 50, mHeight / 2 + 270, Path.Direction.CW);
         mRegionGameEnd = new Region();
         mRegionGameEnd.setPath(mGameEnd, mRegionWholeScreen);
     }
@@ -349,9 +352,11 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
     private String gameScore() {
         int mScore = (int) (((System.currentTimeMillis() - mStartTime)) / 1000) % 60;
         mScore = BASE_TIME - mScore;
-        mScore *= 200;
+        mScore *= 250;
         mScore -= mPlayerDamage * 200;
         mScore += mBossDamage * 150;
+        if (mPlayerDamage == 0)
+            mScore += 10000;
         if (mIsFailed)
             mScore /= 5;
         if (mIsClear)
@@ -384,15 +389,20 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
 
     private void newPlayer() {
         mPlayer = new PlayerChara(mWidth / 2, mHeight / 2, mBitmapPlayer.getWidth(), mBitmapPlayer.getHeight(),
-                BitmapFactory.decodeResource(getResources(), R.drawable.newchara));
+                BitmapFactory.decodeResource(getResources(), R.drawable.player_2));
         mIsClear = false;
         mIsFailed = false;
         mStartTime = System.currentTimeMillis();
     }
 
     private void newBoss() {
-        mBoss = new BossFirst(30, mBitmapBoss.getHeight(), mBitmapBoss.getWidth(), mBitmapBoss.getHeight(),
-                BitmapFactory.decodeResource(getResources(), R.drawable.newboss_1));
+        mBoss = new BossFirst(mWidth / 4, mBitmapBoss.getHeight(), mBitmapBoss.getWidth(), mBitmapBoss.getHeight(),
+                BitmapFactory.decodeResource(getResources(), R.drawable.boss_1));
+    }
+
+    private void newButton() {
+        mButton = new Image(mWidth / 2 - 120, mHeight / 2 + 160, mWidth * 2 / 3, mHeight / 2 + 270,
+                BitmapFactory.decodeResource(getResources(), R.drawable.button_1));
     }
 
 
@@ -511,5 +521,6 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
             }
         }
     }
+
 
 }
