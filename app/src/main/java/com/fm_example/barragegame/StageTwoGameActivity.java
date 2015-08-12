@@ -133,12 +133,12 @@ public class StageTwoGameActivity extends SurfaceView implements SurfaceHolder.C
         while (mThread.isAlive()) ;
     }
 
-    private void newPlayer() {
-        mPlayer = new PlayerChara(mWidth / 2, mHeight / 2, mBitmapPlayer.getWidth(), mBitmapPlayer.getHeight(),
-                BitmapFactory.decodeResource(getResources(), R.drawable.player_2));
-        mIsClear = false;
-        mIsFailed = false;
-        mStartTime = System.currentTimeMillis();
-    }
+    //  private void newPlayer() {
+    //      mPlayer = new PlayerChara(mWidth / 2, mHeight / 2, mBitmapPlayer.getWidth(), mBitmapPlayer.getHeight(),
+    //              BitmapFactory.decodeResource(getResources(), R.mipmap.aaaaa2));
+    //      mIsClear = false;
+    //      mIsFailed = false;
+    //      mStartTime = System.currentTimeMillis();
+    //  }
 
 }
