@@ -4,8 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
 public class PlayerChara extends ItemObject {
-    private static final int SAFE_AREA = 55;
-    private int mLifeCount = 0;
+
     private Bitmap mBitmap;
 
     public PlayerChara(int left, int top, int width, int height, Bitmap bitmap) {
@@ -20,26 +19,6 @@ public class PlayerChara extends ItemObject {
 
     public void move(int role, int pitch) {
         super.move(role / 2, -(pitch / 2));
-    }
-
-    public int shotCheck(BulletObject bulletObject) {
-        if ((this.getLeft() + SAFE_AREA < bulletObject.getRight()) &&
-                (this.getTop() + SAFE_AREA < bulletObject.getButton()) && (
-                this.getRight() - SAFE_AREA > bulletObject.getLeft()) &&
-                this.getButton() - SAFE_AREA > bulletObject.getTop()) {
-            mLifeCount++;
-        }
-        return mLifeCount;
-    }
-
-    public int touchBoss(BossChara bosschara) {
-        if ((this.getLeft() + SAFE_AREA < bosschara.getRight()) &&
-                (this.getTop() + SAFE_AREA < bosschara.getButton()) && (
-                this.getRight() - SAFE_AREA > bosschara.getLeft()) &&
-                this.getButton() - SAFE_AREA > bosschara.getTop()) {
-            mLifeCount = 10000;
-        }
-        return mLifeCount;
     }
 
 
