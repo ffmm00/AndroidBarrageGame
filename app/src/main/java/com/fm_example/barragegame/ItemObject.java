@@ -24,6 +24,7 @@ public class ItemObject {
 
     }
 
+
     public int getLeft() {
         return mLeft;
     }
