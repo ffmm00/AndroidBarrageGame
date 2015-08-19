@@ -9,7 +9,7 @@ public class BossFirst extends BossChara {
         super(left, top, width, height, bitmap);
     }
 
-    public void move(int xSpeed) {
-        super.move(xSpeed, 0);
+    public void move(int xSpeed, int ySpeed) {
+        super.move(xSpeed, ySpeed);
     }
 }

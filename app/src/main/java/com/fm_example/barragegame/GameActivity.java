@@ -12,7 +12,6 @@ import android.graphics.Path;
 import android.graphics.Region;
 import android.media.AudioManager;
 import android.media.SoundPool;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -24,8 +23,6 @@ import java.util.List;
 import java.util.Random;
 
 import android.media.MediaPlayer;
-import android.view.WindowManager;
-import android.widget.ImageView;
 
 public class GameActivity extends SurfaceView implements SurfaceHolder.Callback, Runnable {
 
@@ -70,6 +67,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
     private Bitmap mBitmapPlayerBullet;
     private Bitmap mBitmapButton;
     private Image mButton;
+    private int mBullet;
 
     private Path mGameEnd;
     private Region mRegionGameEnd;
@@ -82,7 +80,6 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
     private int mDamage;
     private int mClear;
     private int mFail;
-
 
     private Bitmap mBitmapBullet;
 
@@ -175,16 +172,16 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         mPlayer.move(CharacterMove.role, CharacterMove.pitch);
 
         if (mPlayer.getButton() > mHeight) {
-            mPlayer.setLocate(mPlayer.getLeft(), mHeight - (mBitmapPlayer.getHeight() - 1));
+            mPlayer.setLocate(mPlayer.getLeft(), mHeight - mBitmapPlayer.getHeight());
         }
         if (mPlayer.getTop() < 0) {
-            mPlayer.setLocate(mPlayer.getLeft(), 1);
+            mPlayer.setLocate(mPlayer.getLeft(), 0);
         }
         if (mPlayer.getLeft() < 0) {
-            mPlayer.setLocate(1, mPlayer.getTop());
+            mPlayer.setLocate(0, mPlayer.getTop());
         }
         if (mPlayer.getRight() > mWidth) {
-            mPlayer.setLocate(mWidth - (mBitmapPlayer.getWidth() - 1), mPlayer.getTop());
+            mPlayer.setLocate(mWidth - mBitmapPlayer.getWidth(), mPlayer.getTop());
         }
 
         int mSecond = (int) ((((System.currentTimeMillis() - mStartTime)) / 100) % 60);
@@ -223,7 +220,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
 
 
         if (mIsBossPowerUp) {
-            mBoss.move(3);
+            mBoss.move(3, 0);
             if (mSecond - mBossBulletSecondVerTwoSave == 11) {
                 newBossDiagnalBulletLeft();
                 newBossDiagnalBulletRight();
@@ -235,7 +232,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         }
 
         if (mBoss.getLeft() >= 30) {
-            mBoss.move(2);
+            mBoss.move(2, 0);
         }
         if (mBoss.getRight() >= mWidth - 30)
             mBoss.setLocate(30, mBoss.getTop());
@@ -459,7 +456,13 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
     private void newHorizonalBullet() {
         BulletObject horizonalBullet;
 
-        for (int i = 0; i < heightAdjust(BULLETS); i++) {
+        if (!mIsBossPowerUp) {
+            mBullet = heightAdjust(BULLETS);
+        } else {
+            mBullet = heightAdjust(BULLETS) - 1;
+        }
+
+        for (int i = 0; i < mBullet; i++) {
             int left = -mBitmapBullet.getWidth();
             int top = mRand.nextInt(mHeight);
 
@@ -473,7 +476,13 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
     private void newHorizonalBulletRight() {
         BulletObject horizonalBullet;
 
-        for (int i = 0; i < heightAdjust(BULLETS) + 1; i++) {
+        //if (!mIsBossPowerUp) {
+        mBullet = heightAdjust(BULLETS);
+        // } else {
+        //    mBullet = heightAdjust(BULLETS) - 1;
+        // }
+
+        for (int i = 0; i < mBullet; i++) {
             int left = mWidth + mBitmapBullet.getWidth();
             int top = mRand.nextInt(mHeight);
 
