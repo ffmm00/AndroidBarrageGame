@@ -31,8 +31,8 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
 
     private static final int BULLETS = 10;
 
-    private static final int FIRST_BOSS_LIFE = 290;
-    private static final int PLAYER_LIFE = 40;
+    private static final int FIRST_BOSS_LIFE = 320;
+    private static final int PLAYER_LIFE = 8;
     private static final int BASE_TIME = 120;
 
     private int mWidth;
@@ -52,6 +52,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
     private boolean mIsClear = false;
     private boolean mIsFailed = false;
     private boolean mIsBossPowerUp = false;
+    private boolean mIsBossMove = false;
 
     private boolean mIsAttached;
     private Thread mThread;
@@ -93,7 +94,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         super(context);
 
         mSoundPool = new SoundPool(11, AudioManager.STREAM_MUSIC, 0);
-        mDamage = mSoundPool.load(context, R.raw.damagesound, 1);
+        mDamage = mSoundPool.load(context, R.raw.damage_2, 1);
         mFail = mSoundPool.load(context, R.raw.failedsound, 1);
         mClear = mSoundPool.load(context, R.raw.clearedsound, 1);
 
@@ -113,7 +114,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         mHeight = getHeight();
         Resources rsc = getResources();
 
-        mBitmapPlayer = BitmapFactory.decodeResource(rsc, R.drawable.player_xxxhdpi);
+        mBitmapPlayer = BitmapFactory.decodeResource(rsc, R.drawable.player_xxxhdpi_b);
 
         mBitmapBoss = BitmapFactory.decodeResource(rsc, R.drawable.boss_xxxhdpi);
         mBitmapBullet = BitmapFactory.decodeResource(rsc, R.drawable.bossbullet_xxxhdpi);
@@ -220,26 +221,33 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
 
 
         if (mIsBossPowerUp) {
-            mBoss.move(3, 0);
             if (mSecond - mBossBulletSecondVerTwoSave == 11) {
                 newBossDiagnalBulletLeft();
                 newBossDiagnalBulletRight();
                 newBossBulletCenter();
                 mBossBulletSecondVerTwoSave = mSecond;
             }
-
-
         }
 
-        if (mBoss.getLeft() >= 30) {
-            mBoss.move(2, 0);
+        if (!mIsBossMove) {
+            mBoss.move(3, 0);
+            if (mIsBossPowerUp)
+                mBoss.move(2, 0);
+            if (mBoss.getRight() >= getWidth() - mBitmapBoss.getWidth() / 3)
+                mIsBossMove = true;
         }
-        if (mBoss.getRight() >= mWidth - 30)
-            mBoss.setLocate(30, mBoss.getTop());
 
+        if (mIsBossMove) {
+            mBoss.move(-3, 0);
+            if (mIsBossPowerUp)
+                mBoss.move(-2, 0);
+            if (mBoss.getLeft() <= mBitmapBoss.getWidth() / 3)
+                mIsBossMove = false;
+        }
 
         bulletDelete();
         bossTouchedBulletDelete();
+        charaTouchedBulletDelete();
 
         try {
             for (BulletObject bulletObject : mBulletList) {
@@ -264,13 +272,13 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
                     for (BulletObject bulletObject : mBulletList) {
 
                         int temp = mPlayerDamage;
-                        mPlayerDamage = shotCheck(bulletObject);
+                        mPlayerDamage = mLifeCount;
                         if (temp < mPlayerDamage) {
                             mSoundPool.play(mDamage, 1.0F, 1.0F, 0, 0, 1.0F);
                             temp = mPlayerDamage;
                         }
 
-                        if (shotCheck(bulletObject) >= PLAYER_LIFE) {
+                        if (mLifeCount >= PLAYER_LIFE) {
                             mIsFailed = true;
                         }
                     }
@@ -329,6 +337,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
                         mCanvas.drawBitmap(mBitmapPlayerBullet, playershoot.getLeft(), playershoot.getTop(), null);
                     }
                 }
+
 
                 mPlayer.draw(mCanvas);
                 mBoss.draw(mCanvas);
@@ -394,12 +403,14 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         int mScore = (int) (((System.currentTimeMillis() - mStartTime)) / 1000) % 60;
         mScore = BASE_TIME - mScore;
         mScore *= 400;
-        mScore -= mPlayerDamage * 200;
+        mScore -= mPlayerDamage * 500;
         mScore += mBossDamage * 400;
-        if (mPlayerDamage == 0)
+        if (mLifeCount == 0)
             mScore += 20000;
+        if (mLifeCount > 5000)
+            mScore -= 3000;
         if (mIsFailed)
-            mScore /= 5;
+            mScore /= 4;
         if (mScore < 0)
             mScore = 0;
         return ("スコア：" + mScore);
@@ -568,6 +579,20 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         }
     }
 
+    private void charaTouchedBulletDelete() {
+        Iterator<BulletObject> bullet = mBulletList.iterator();
+        while (bullet.hasNext()) {
+            BulletObject bulletObject = bullet.next();
+            if ((mPlayer.getLeft() + mSafeArea < bulletObject.getRight()) &&
+                    (mPlayer.getTop() + mSafeArea < bulletObject.getButton()) &&
+                    (mPlayer.getRight() - mSafeArea > bulletObject.getLeft()) &&
+                    (mPlayer.getButton() - mSafeArea > bulletObject.getTop())) {
+                mLifeCount++;
+                bullet.remove();
+            }
+        }
+    }
+
     private void bossTouchedBulletDelete() {
         Iterator<StraightShoot> bullet = mPlayerBulletList.iterator();
         while (bullet.hasNext()) {
@@ -581,17 +606,6 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         }
     }
 
-
-    public int shotCheck(BulletObject bulletObject) {
-
-        if ((mPlayer.getLeft() + mSafeArea < bulletObject.getRight()) &&
-                (mPlayer.getTop() + mSafeArea < bulletObject.getButton()) && (
-                mPlayer.getRight() - mSafeArea > bulletObject.getLeft()) &&
-                mPlayer.getButton() - mSafeArea > bulletObject.getTop()) {
-            mLifeCount++;
-        }
-        return mLifeCount;
-    }
 
     public int touchBoss(BossChara bosschara) {
         if ((mPlayer.getLeft() + mSafeArea < bosschara.getRight()) &&

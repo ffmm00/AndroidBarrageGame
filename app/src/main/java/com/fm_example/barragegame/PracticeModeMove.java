@@ -9,9 +9,9 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.WindowManager;
 
-public class StageTwoMove extends Activity implements SensorEventListener {
+public class PracticeModeMove extends Activity implements SensorEventListener {
 
-    private StageTwoGameActivity mSurfaceView;
+    private PracticeMode mSurfaceView;
     private SensorManager mSensorManager;
     private Sensor mMagField;
     private Sensor mAccelerometer;
@@ -30,8 +30,8 @@ public class StageTwoMove extends Activity implements SensorEventListener {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 
-        //mSurfaceView = new StageTwoGameActivity(this);
-        //setContentView(mSurfaceView);
+        mSurfaceView = new PracticeMode(this);
+        setContentView(mSurfaceView);
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);

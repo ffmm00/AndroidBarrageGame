@@ -27,12 +27,22 @@ public class MainActivity extends Activity {
         mOpening.start();
 
 
-        Button btnNext = (Button) this.findViewById(R.id.button);
+        Button btnNext = (Button) this.findViewById(R.id.button2);
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mOpening.stop();
                 Intent intent = new Intent(MainActivity.this, CharacterMove.class);
+                startActivity(intent);
+            }
+        });
+
+        Button btnNext2 = (Button) this.findViewById(R.id.button1);
+        btnNext2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mOpening.stop();
+                Intent intent = new Intent(MainActivity.this, PracticeModeMove.class);
                 startActivity(intent);
             }
         });
