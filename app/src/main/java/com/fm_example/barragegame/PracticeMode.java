@@ -49,6 +49,7 @@ public class PracticeMode extends SurfaceView implements SurfaceHolder.Callback,
     private boolean mIsGameTwo = false;
     private boolean mIsGameThree = false;
     private boolean mIsGameFour = false;
+    private boolean mIsGameFive = false;
 
     private SoundPool mSoundPool;
 
@@ -154,16 +155,14 @@ public class PracticeMode extends SurfaceView implements SurfaceHolder.Callback,
 
         }
 
-        if (!mIsGameTwo && mGetItem == 49) {
-            mItemListYellow.clear();
+        if (!mIsGameTwo && mItemListYellow.isEmpty()) {
             mItemListRed.clear();
             mPlayer.setLocate(mWidth / 2, mHeight - (2 * mBitmapPlayer.getHeight()));
             newItemTwo();
             mIsGameTwo = true;
         }
 
-        if (!mIsGameThree && mGetItem == 74) {
-            mItemListYellow.clear();
+        if (!mIsGameThree && mItemListYellow.isEmpty()) {
             mItemListRed.clear();
             mBitmapItemTwo = Bitmap.createScaledBitmap(mBitmapItemTwo, mWidth / 28,
                     mHeight / 42, false);
@@ -172,8 +171,7 @@ public class PracticeMode extends SurfaceView implements SurfaceHolder.Callback,
             mIsGameThree = true;
         }
 
-        if (!mIsGameFour && mGetItem == 77) {
-            mItemListYellow.clear();
+        if (!mIsGameFour && mItemListYellow.isEmpty()) {
             mItemListRed.clear();
             mPlayer.setLocate(mWidth / 2, mBitmapPlayer.getHeight());
             newItemFour();
@@ -199,14 +197,8 @@ public class PracticeMode extends SurfaceView implements SurfaceHolder.Callback,
                     }
                 }
 
-                if (0 <= mGetItem && mGetItem < 49) {
-                    String msg = "黄色い玉を獲得せよ";
-                    mPaint.setColor(Color.BLACK);
-                    mPaint.setTextSize(heightAdjust(120));
-                    mCanvas.drawText(msg, mBitmapPlayer.getWidth() * 2, mBitmapPlayer.getWidth(), mPaint);
-                }
 
-                if (49 <= mGetItem && mGetItem < 80) {
+                if (mIsGameOne) {
                     String msg = "黄色い玉のみ獲得せよ";
                     mPaint.setColor(Color.BLACK);
                     mPaint.setTextSize(heightAdjust(120));
@@ -360,17 +352,17 @@ public class PracticeMode extends SurfaceView implements SurfaceHolder.Callback,
                     (mPlayer.getTop() + mSafeArea + heightAdjust(11) < pointitem.getButton()) &&
                     (mPlayer.getRight() - mSafeArea > pointitem.getLeft()) &&
                     (mPlayer.getButton() - mSafeArea > pointitem.getTop())) {
-                if (mGetItem < 74) {
+                if (!mItemListYellow.isEmpty() && !mIsGameThree) {
+                    mItemListYellow.clear();
                     mIsGameTwo = false;
-                    mGetItem = 49;
                 }
-                if (74 <= mGetItem && mGetItem < 77) {
+                if (!mItemListYellow.isEmpty() && !mIsGameFour) {
+                    mItemListYellow.clear();
                     mIsGameThree = false;
-                    mGetItem = 74;
                 }
-                if (77 <= mGetItem && mGetItem < 80) {
+                if (!mItemListYellow.isEmpty() && !mIsGameFive) {
+                    mItemListYellow.clear();
                     mIsGameFour = false;
-                    mGetItem = 77;
                 }
                 mSoundPool.play(mGetRed, 2.0F, 2.0F, 0, 0, 1.0F);
                 itemRed.remove();
