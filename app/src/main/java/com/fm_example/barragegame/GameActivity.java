@@ -487,12 +487,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
     private void newHorizonalBulletRight() {
         BulletObject horizonalBullet;
 
-        //if (!mIsBossPowerUp) {
         mBullet = heightAdjust(BULLETS);
-        // } else {
-        //    mBullet = heightAdjust(BULLETS) - 1;
-        // }
-
         for (int i = 0; i < mBullet; i++) {
             int left = mWidth + mBitmapBullet.getWidth();
             int top = mRand.nextInt(mHeight);
@@ -583,8 +578,8 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         Iterator<BulletObject> bullet = mBulletList.iterator();
         while (bullet.hasNext()) {
             BulletObject bulletObject = bullet.next();
-            if ((mPlayer.getLeft() + mSafeArea < bulletObject.getRight()) &&
-                    (mPlayer.getTop() + mSafeArea < bulletObject.getButton()) &&
+            if ((mPlayer.getLeft() + mSafeArea + heightAdjust(8) < bulletObject.getRight()) &&
+                    (mPlayer.getTop() + mSafeArea + heightAdjust(8) < bulletObject.getButton()) &&
                     (mPlayer.getRight() - mSafeArea > bulletObject.getLeft()) &&
                     (mPlayer.getButton() - mSafeArea > bulletObject.getTop())) {
                 mLifeCount++;
@@ -608,8 +603,8 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
 
 
     public int touchBoss(BossChara bosschara) {
-        if ((mPlayer.getLeft() + mSafeArea < bosschara.getRight()) &&
-                (mPlayer.getTop() + mSafeArea < bosschara.getButton()) && (
+        if ((mPlayer.getLeft() + mSafeArea + heightAdjust(11) < bosschara.getRight()) &&
+                (mPlayer.getTop() + mSafeArea + heightAdjust(11) < bosschara.getButton()) && (
                 mPlayer.getRight() - mSafeArea > bosschara.getLeft()) &&
                 mPlayer.getButton() - mSafeArea > bosschara.getTop()) {
             mLifeCount = 10000;
