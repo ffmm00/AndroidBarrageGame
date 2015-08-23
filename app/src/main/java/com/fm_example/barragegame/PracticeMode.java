@@ -178,6 +178,11 @@ public class PracticeMode extends SurfaceView implements SurfaceHolder.Callback,
             mIsGameFour = true;
         }
 
+        if (!mIsGameFive && mItemListYellow.isEmpty()) {
+            mItemListRed.clear();
+            mIsGameFive = true;
+        }
+
         charaTouchedBulletDelete();
 
         try {
@@ -198,11 +203,16 @@ public class PracticeMode extends SurfaceView implements SurfaceHolder.Callback,
                 }
 
 
-                if (mIsGameOne) {
-                    String msg = "黄色い玉のみ獲得せよ";
+                if (!mIsGameFive) {
+                    String msg = "黄色い玉を獲得せよ";
                     mPaint.setColor(Color.BLACK);
                     mPaint.setTextSize(heightAdjust(120));
                     mCanvas.drawText(msg, mBitmapPlayer.getWidth() * 2, mBitmapPlayer.getWidth(), mPaint);
+                } else {
+                    String msg = "ゲームクリア";
+                    mPaint.setColor(Color.BLACK);
+                    mPaint.setTextSize(heightAdjust(120));
+                    mCanvas.drawText(msg, mBitmapPlayer.getWidth() * 3, mBitmapPlayer.getWidth(), mPaint);
                 }
 
 
@@ -274,14 +284,14 @@ public class PracticeMode extends SurfaceView implements SurfaceHolder.Callback,
     private void newItemTwo() {
         PointItem pointItem;
 
-        for (int top = mBitmapPlayer.getHeight() * 2; top <= mHeight * 2 / 3; top += mBitmapItemOne.getWidth() * 3)
-            for (int left = mBitmapPlayer.getWidth(); left < mWidth - mBitmapPlayer.getWidth(); left += mBitmapPlayer.getWidth() + mSafeArea) {
+        for (int top = mBitmapPlayer.getHeight() * 2; top <= mHeight * 2 / 3; top += mBitmapPlayer.getWidth() + mBitmapItemOne.getWidth() / 2)
+            for (int left = mBitmapPlayer.getWidth(); left < mWidth - mBitmapPlayer.getWidth(); left += mBitmapPlayer.getWidth() + mBitmapItemOne.getWidth() / 2) {
                 pointItem = new PointItem(left, top, mBitmapItemOne.getWidth(), mBitmapItemOne.getHeight(), 0);
                 mItemListRed.add(pointItem);
             }
 
-        for (int top = mBitmapPlayer.getHeight() * 2 + (mBitmapItemOne.getWidth() * 3) / 2; top <= mHeight * 2 / 3; top += mBitmapItemOne.getWidth() * 3)
-            for (int left = mBitmapPlayer.getWidth() + (mBitmapPlayer.getWidth() + mSafeArea) / 2; left < mWidth - mBitmapPlayer.getWidth() * 2; left += mBitmapPlayer.getWidth() + mSafeArea) {
+        for (int top = mBitmapPlayer.getHeight() * 2 + (mBitmapPlayer.getWidth() + mBitmapItemOne.getWidth() / 2) / 2; top <= mHeight * 2 / 3; top += mBitmapPlayer.getWidth() + mBitmapItemOne.getWidth() / 2)
+            for (int left = mBitmapPlayer.getWidth() + (mBitmapPlayer.getWidth() + mBitmapItemOne.getWidth() / 2) / 2; left < mWidth - mBitmapPlayer.getWidth(); left += mBitmapPlayer.getWidth() + mBitmapItemOne.getWidth() / 2) {
                 pointItem = new PointItem(left, top, mBitmapItemOne.getWidth(), mBitmapItemOne.getHeight(), 0);
                 mItemListYellow.add(pointItem);
             }
