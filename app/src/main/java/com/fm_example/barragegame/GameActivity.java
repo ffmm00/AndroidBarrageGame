@@ -186,8 +186,8 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         }
 
         int mSecond = (int) ((((System.currentTimeMillis() - mStartTime)) / 100) % 60);
-        //String a = "" + mSecond;
-        //Log.d("Test", a);
+        String a = "" + mSecond;
+        Log.d("Test", a);
 
         if (mSecond == 0) {
             mPlayerBulletSecondSave = 0;

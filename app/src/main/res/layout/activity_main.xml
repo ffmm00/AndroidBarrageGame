@@ -18,12 +18,20 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ボ　ス"
+        android:text="ゲーム２(途中)"
         android:id="@+id/button2"
-        android:layout_below="@+id/button1"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ボ　ス"
+        android:id="@+id/button3"
+        android:layout_marginTop="72dp"
+        android:layout_below="@+id/button2"
         android:layout_alignLeft="@+id/button1"
-        android:layout_alignStart="@+id/button1"
-        android:layout_marginTop="142dp" />
+        android:layout_alignStart="@+id/button1" />
 
 
 </RelativeLayout>

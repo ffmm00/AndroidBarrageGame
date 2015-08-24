@@ -24,6 +24,10 @@
         </activity>
         <activity
             android:screenOrientation="portrait"
+            android:name=".AvoidModeMove"
+            android:label="@string/title_activity_game"></activity>
+        <activity
+            android:screenOrientation="portrait"
             android:name=".PracticeModeMove"
             android:label="@string/title_activity_game"></activity>
     </application>

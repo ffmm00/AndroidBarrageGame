@@ -42,8 +42,6 @@ public class PracticeMode extends SurfaceView implements SurfaceHolder.Callback,
     private Paint mPaint = null;
     private Bitmap mBitmapPlayer;
     private PlayerChara mPlayer;
-    private BossFirst mBossOne;
-    private PointItem mItem;
 
     private boolean mIsGameOne = false;
     private boolean mIsGameTwo = false;
@@ -66,7 +64,6 @@ public class PracticeMode extends SurfaceView implements SurfaceHolder.Callback,
     private List<PointItem> mItemListYellow = new ArrayList<PointItem>();
     private List<PointItem> mItemListRed = new ArrayList<PointItem>();
 
-    private Random mRand;
 
     public PracticeMode(Context context) {
         super(context);
@@ -127,9 +124,6 @@ public class PracticeMode extends SurfaceView implements SurfaceHolder.Callback,
 
     public void drawGameBoard() {
 
-        if ((mIsFailed) || (mIsClear)) {
-            return;
-        }
 
         mPlayer.move(PracticeModeMove.role, PracticeModeMove.pitch);
 
