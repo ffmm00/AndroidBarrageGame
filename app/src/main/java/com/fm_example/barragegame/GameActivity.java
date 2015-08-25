@@ -565,10 +565,10 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         Iterator<BulletObject> bullet = mBulletList.iterator();
         while (bullet.hasNext()) {
             BulletObject bulletObject = bullet.next();
-            if (bulletObject.getButton() == -mBitmapBullet.getHeight() * 3 ||
-                    bulletObject.getLeft() == -mBitmapBullet.getWidth() * 3 ||
-                    bulletObject.getRight() == mWidth + mBitmapBullet.getWidth() * 3 ||
-                    bulletObject.getTop() == mHeight + mBitmapBullet.getHeight()) {
+            if (bulletObject.getButton() < mBitmapBullet.getHeight() * 4 ||
+                    bulletObject.getLeft() < -mBitmapBullet.getWidth() * 4 ||
+                    bulletObject.getRight() > mWidth + mBitmapBullet.getWidth() * 4 ||
+                    bulletObject.getTop() > mHeight + mBitmapBullet.getHeight()) {
                 bullet.remove();
             }
         }

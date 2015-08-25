@@ -158,8 +158,6 @@ public class PracticeMode extends SurfaceView implements SurfaceHolder.Callback,
 
         if (!mIsGameThree && mItemListYellow.isEmpty()) {
             mItemListRed.clear();
-            mBitmapItemTwo = Bitmap.createScaledBitmap(mBitmapItemTwo, mWidth / 28,
-                    mHeight / 42, false);
             mPlayer.setLocate(mWidth / 2, mHeight - (2 * mBitmapPlayer.getHeight()));
             newItemThree();
             mIsGameThree = true;
@@ -294,13 +292,13 @@ public class PracticeMode extends SurfaceView implements SurfaceHolder.Callback,
     private void newItemThree() {
         PointItem pointItem;
 
-        for (int top = mBitmapPlayer.getHeight() * 3; top <= mHeight * 2 / 3; top += mBitmapItemOne.getWidth() * 3)
+        for (int top = mBitmapPlayer.getHeight() * 3; top <= mHeight * 2 / 3; top += mBitmapItemOne.getWidth() * 4)
             for (int left = 0; left < mWidth; left += mBitmapPlayer.getWidth() + mSafeArea) {
                 pointItem = new PointItem(left, top, mBitmapItemOne.getWidth(), mBitmapItemOne.getHeight(), 0);
                 mItemListRed.add(pointItem);
             }
 
-        for (int top = mBitmapPlayer.getHeight() * 3 + (mBitmapItemOne.getWidth() * 3) / 2; top <= mHeight * 2 / 3; top += mBitmapItemOne.getWidth() * 3)
+        for (int top = mBitmapPlayer.getHeight() * 3 + (mBitmapItemOne.getWidth() * 3) / 2; top <= mHeight * 2 / 3; top += mBitmapItemOne.getWidth() * 4)
             for (int left = (mBitmapPlayer.getWidth() + mSafeArea) / 2; left < mWidth; left += mBitmapPlayer.getWidth() + mSafeArea) {
                 pointItem = new PointItem(left, top, mBitmapItemOne.getWidth(), mBitmapItemOne.getHeight(), 0);
                 mItemListRed.add(pointItem);
@@ -316,13 +314,13 @@ public class PracticeMode extends SurfaceView implements SurfaceHolder.Callback,
     private void newItemFour() {
         PointItem pointItem;
 
-        for (int top = mBitmapPlayer.getHeight() * 3; top <= mHeight * 2 / 3; top += mBitmapItemOne.getWidth() * 3)
+        for (int top = mBitmapPlayer.getHeight() * 3; top <= mHeight * 2 / 3; top += mBitmapItemOne.getWidth() * 4)
             for (int left = 0; left < mWidth; left += mBitmapPlayer.getWidth() + mSafeArea) {
                 pointItem = new PointItem(left, top, mBitmapItemOne.getWidth(), mBitmapItemOne.getHeight(), 0);
                 mItemListRed.add(pointItem);
             }
 
-        for (int top = mBitmapPlayer.getHeight() * 3 + (mBitmapItemOne.getWidth() * 3) / 2; top <= mHeight * 2 / 3; top += mBitmapItemOne.getWidth() * 3)
+        for (int top = mBitmapPlayer.getHeight() * 3 + (mBitmapItemOne.getWidth() * 3) / 2; top <= mHeight * 2 / 3; top += mBitmapItemOne.getWidth() * 4)
             for (int left = (mBitmapPlayer.getWidth() + mSafeArea) / 2; left < mWidth; left += mBitmapPlayer.getWidth() + mSafeArea) {
                 pointItem = new PointItem(left, top, mBitmapItemOne.getWidth(), mBitmapItemOne.getHeight(), 0);
                 mItemListRed.add(pointItem);
