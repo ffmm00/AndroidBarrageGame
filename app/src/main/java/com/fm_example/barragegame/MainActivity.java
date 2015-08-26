@@ -57,6 +57,16 @@ public class MainActivity extends Activity {
             }
         });
 
+        Button btnNext4 = (Button) this.findViewById(R.id.button4);
+        btnNext4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mOpening.stop();
+                Intent intent = new Intent(MainActivity.this, BossMove.class);
+                startActivity(intent);
+            }
+        });
+
 
 
     }

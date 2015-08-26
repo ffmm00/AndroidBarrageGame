@@ -19,12 +19,15 @@
         </activity>
         <activity
             android:screenOrientation="portrait"
-            android:name=".CharacterMove"
-            android:label="@string/title_activity_game">
-        </activity>
+            android:name=".AvoidModeMove"
+            android:label="@string/title_activity_game"></activity>
         <activity
             android:screenOrientation="portrait"
-            android:name=".AvoidModeMove"
+            android:name=".BossMove"
+            android:label="@string/title_activity_game"></activity>
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".CharacterMove"
             android:label="@string/title_activity_game"></activity>
         <activity
             android:screenOrientation="portrait"

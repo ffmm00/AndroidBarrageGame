@@ -31,11 +31,9 @@ public class AvoidMode extends SurfaceView implements SurfaceHolder.Callback, Ru
     private int mBulletSecondSaveOne;
     private int mBulletSecondSaveTwo;
     private int mFirstMove = 20;
+    private int mLimitTimeSave = 0;
 
     private SurfaceHolder mHolder;
-
-    private boolean mIsClear = false;
-    private boolean mIsFailed = false;
 
     private Canvas mCanvas = null;
     private Paint mPaint = null;
@@ -54,10 +52,9 @@ public class AvoidMode extends SurfaceView implements SurfaceHolder.Callback, Ru
     private boolean mIsGameTwoRestart = false;
     private boolean mIsGameThree = false;
     private boolean mIsGameThreeRestart = false;
-    private boolean mIsGameFour = false;
-    private boolean mIsGameFive = false;
 
     private int mIsBarrierMove = 2;
+    private int mLimitTime = 31;
 
     private SoundPool mSoundPool;
 
@@ -155,7 +152,7 @@ public class AvoidMode extends SurfaceView implements SurfaceHolder.Callback, Ru
         int mSecond = (int) ((((System.currentTimeMillis() - mStartTime)) / 100) % 60) + 1;
 
         //String a = "" + mSecond;
-        // Log.d("Test", a);
+        //Log.d("Test", a);
 
         if (mSecond == 1) {
             mBulletSecondSaveOne = 0;
@@ -163,7 +160,7 @@ public class AvoidMode extends SurfaceView implements SurfaceHolder.Callback, Ru
         }
 
         if (!mIsGameOneRestart) {
-            mPlayer.setLocate(mWidth / 2, mHeight - (2 * mBitmapPlayer.getHeight()));
+            mPlayer.setLocate(mWidth / 2 - mBitmapPlayer.getHeight() / 2, mHeight - (2 * mBitmapPlayer.getHeight()));
             newItemOne();
             barrier();
             mIsGameOneRestart = true;
@@ -207,7 +204,7 @@ public class AvoidMode extends SurfaceView implements SurfaceHolder.Callback, Ru
 
         //2ステージ
         if (!mIsGameTwoRestart && mItemListYellow.isEmpty()) {
-            mPlayer.setLocate(mWidth / 2, mHeight - (2 * mBitmapPlayer.getHeight()));
+            mPlayer.setLocate(mWidth / 2 - mBitmapPlayer.getHeight() / 2, mHeight - (2 * mBitmapPlayer.getHeight()));
             newItemOne();
             mIsGameTwoRestart = true;
         }
@@ -227,12 +224,44 @@ public class AvoidMode extends SurfaceView implements SurfaceHolder.Callback, Ru
                 stageOneShot_2();
                 mBulletSecondSaveTwo = mSecond;
             }
+
+            if (mItemListYellow.isEmpty()) {
+                mFirstMove = 40;
+                mSecond = 0;
+                mBulletList.clear();
+                mIsGameTwo = true;
+            }
         }
 
         //ステージ３
         if (!mIsGameThreeRestart && mItemListYellow.isEmpty()) {
-            mIsGameTwo = true;
+            mPlayer.setLocate(mWidth / 2 - mBitmapPlayer.getHeight(), mHeight - (2 * mBitmapPlayer.getHeight()));
+            newItemTwo();
+            mLimitTime = 31;
             mIsGameThreeRestart = true;
+            mStartTime = System.currentTimeMillis();
+        }
+
+        if (!mIsGameThree && mIsGameTwo) {
+            if (mSecond >= mFirstMove) {
+                mPlayer.move(AvoidModeMove.role, AvoidModeMove.pitch);
+                mFirstMove = -20;
+            }
+            if (mFirstMove == -20) {
+                int temp = (int) ((((System.currentTimeMillis() - mStartTime)) / 1000) % 60);
+                if (temp != mLimitTimeSave) {
+                    mLimitTime--;
+                    mLimitTimeSave = temp;
+                }
+            }
+            if (mItemListYellow.isEmpty()) {
+                mFirstMove = -50;
+                mIsGameThree = true;
+            }
+            if (mLimitTime == 0) {
+                mItemListYellow.clear();
+                mIsGameThreeRestart = false;
+            }
         }
 
         bulletDelete();
@@ -245,7 +274,7 @@ public class AvoidMode extends SurfaceView implements SurfaceHolder.Callback, Ru
             if (mCanvas != null) {
                 mCanvas.drawColor(Color.LTGRAY);
 
-                if (!((mIsClear) || (mIsFailed))) {
+                if (!mIsGameThree) {
                     mPaint.setColor(Color.DKGRAY);
                     for (PointItem pointitem : mItemListYellow) {
                         mCanvas.drawBitmap(mBitmapItemOne, pointitem.getLeft(), pointitem.getTop(), null);
@@ -266,19 +295,39 @@ public class AvoidMode extends SurfaceView implements SurfaceHolder.Callback, Ru
                     mPaint.setTextSize(heightAdjust(120));
                     mCanvas.drawText(msg, mWidth / 2 - mBitmapPlayer.getHeight(), mHeight - (2 * mBitmapPlayer.getHeight()), mPaint);
                 }
-                if (mFirstMove == 20) {
+                if (mFirstMove == 20 || mFirstMove == 40) {
                     String msg = "READY";
                     mPaint.setColor(Color.BLACK);
                     mPaint.setTextSize(heightAdjust(120));
                     mCanvas.drawText(msg, mWidth / 2 - mBitmapPlayer.getHeight(), mHeight - (2 * mBitmapPlayer.getHeight()), mPaint);
                 }
 
-                if (!mIsGameFive) {
+                if (!mIsGameThree && mIsGameTwo) {
+                    String msg2 = "制限時間内に黄色い玉を獲得せよ";
+                    mPaint.setColor(Color.BLACK);
+                    mPaint.setTextSize(heightAdjust(90));
+                    mCanvas.drawText(msg2, mBitmapPlayer.getWidth(), mBitmapPlayer.getWidth(), mPaint);
+                    if (mLimitTime <= 29) {
+                        String msg = "残り" + mLimitTime + "秒";
+                        mPaint.setColor(Color.BLACK);
+                        mPaint.setTextSize(heightAdjust(120));
+                        mCanvas.drawText(msg, mBitmapPlayer.getHeight() / 2, mHeight - (2 * mBitmapPlayer.getHeight()), mPaint);
+                    } else {
+                        String msg = "残り30秒";
+                        mPaint.setColor(Color.BLACK);
+                        mPaint.setTextSize(heightAdjust(120));
+                        mCanvas.drawText(msg, mBitmapPlayer.getHeight() / 2, mHeight - (2 * mBitmapPlayer.getHeight()), mPaint);
+                    }
+                }
+
+                if (!mIsGameTwo) {
                     String msg = "黄色い玉を獲得せよ";
                     mPaint.setColor(Color.BLACK);
                     mPaint.setTextSize(heightAdjust(120));
                     mCanvas.drawText(msg, mBitmapPlayer.getWidth() * 2, mBitmapPlayer.getWidth(), mPaint);
-                } else {
+                }
+
+                if (mIsGameThree) {
                     String msg = "ゲームクリア";
                     mPaint.setColor(Color.BLACK);
                     mPaint.setTextSize(heightAdjust(120));
@@ -342,7 +391,6 @@ public class AvoidMode extends SurfaceView implements SurfaceHolder.Callback, Ru
 
         mPlayer = new PlayerChara(mWidth / 2, mHeight - (2 * mBitmapPlayer.getHeight()), mBitmapPlayer.getWidth(), mBitmapPlayer.getHeight(),
                 mBitmapPlayer);
-        mIsFailed = false;
         mStartTime = System.currentTimeMillis();
     }
 
@@ -407,6 +455,22 @@ public class AvoidMode extends SurfaceView implements SurfaceHolder.Callback, Ru
             horizonalBullet = new HorizonalBullet(left, top, mBitmapBullet.getWidth(), mBitmapBullet.getHeight(), -xSpeed, 0);
             mBulletList.add(horizonalBullet);
         }
+    }
+
+    private void newItemTwo() {
+        PointItem pointItem;
+
+        for (int top = mBitmapPlayer.getWidth() * 2; top <= mBitmapPlayer.getWidth() * 2 + mBitmapItemOne.getHeight() * 21; top += mBitmapItemOne.getHeight() * 3)
+            for (int left = mBitmapPlayer.getWidth() * 2; left <= mBitmapPlayer.getWidth() * 2 + mBitmapItemOne.getHeight() * 12; left += mBitmapItemOne.getHeight() * 3) {
+                if (top == mBitmapPlayer.getWidth() * 2 || left == mBitmapPlayer.getWidth() * 2 ||
+                        top == mBitmapPlayer.getWidth() * 2 + mBitmapItemOne.getHeight() * 21 ||
+                        left == mBitmapPlayer.getWidth() * 2 + mBitmapItemOne.getHeight() * 12 ||
+                        top - mBitmapItemOne.getHeight() * 6 == left + mBitmapItemOne.getHeight() * 3 ||
+                        top == left) {
+                    pointItem = new PointItem(left, top, mBitmapItemOne.getWidth(), mBitmapItemOne.getWidth(), 0);
+                    mItemListYellow.add(pointItem);
+                }
+            }
     }
 
 

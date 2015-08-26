@@ -9,7 +9,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ゲーム１"
+        android:text="ステージ１"
         android:id="@+id/button1"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
@@ -18,7 +18,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ゲーム２(途中)"
+        android:text="ステージ２"
         android:id="@+id/button2"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
@@ -26,12 +26,20 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ボ　ス"
+        android:text="ボスモード２"
         android:id="@+id/button3"
         android:layout_marginTop="72dp"
         android:layout_below="@+id/button2"
         android:layout_alignLeft="@+id/button1"
         android:layout_alignStart="@+id/button1" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ボスモード１"
+        android:id="@+id/button4"
+        android:layout_below="@+id/button2"
+        android:layout_centerHorizontal="true" />
 
 
 </RelativeLayout>
