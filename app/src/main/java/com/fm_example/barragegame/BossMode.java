@@ -28,10 +28,8 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
     private static final int SAFE_AREA = 73;
     private int mLifeCount = 0;
 
-    private static final int BULLETS = 10;
-
     private static final int FIRST_BOSS_LIFE = 350;
-    private static final int PLAYER_LIFE = 6;
+    private static final int PLAYER_LIFE = 5;
     private static final int BASE_TIME = 120;
 
     private int mWidth;
@@ -63,7 +61,24 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
     private Bitmap mBitmapPlayerBullet;
     private Bitmap mBitmapButton;
     private Image mButton;
+    private int mLifeDelete = PLAYER_LIFE - 1;
     private int mBullet;
+
+    private Bitmap mBitmapLife_0;
+    private Bitmap mBitmapLife_1;
+    private Bitmap mBitmapLife_2;
+    private Bitmap mBitmapLife_3;
+    private Bitmap mBitmapLife_4;
+
+    private Bitmap[] mBitmaplife = {mBitmapLife_0, mBitmapLife_1, mBitmapLife_2, mBitmapLife_3, mBitmapLife_4};
+
+    private Image mLife_0;
+    private Image mLife_1;
+    private Image mLife_2;
+    private Image mLife_3;
+    private Image mLife_4;
+
+    private Image[] mLife = {mLife_0, mLife_1, mLife_2, mLife_3, mLife_4};
 
     private Path mGameEnd;
     private Region mRegionGameEnd;
@@ -131,6 +146,12 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
         mBitmapButton = Bitmap.createScaledBitmap(mBitmapButton, mWidth / 3,
                 mHeight / 20, false);
 
+        for (int i = 0; i < PLAYER_LIFE; i++) {
+            mBitmaplife[i] = BitmapFactory.decodeResource(rsc, R.drawable.life_xxxhdpi);
+            mBitmaplife[i] = Bitmap.createScaledBitmap(mBitmaplife[i], mWidth / 23,
+                    mHeight / 32, false);
+        }
+
         mSafeArea = heightAdjust(SAFE_AREA);
 
         mStageOne = MediaPlayer.create(getContext(), R.raw.stagefirst);
@@ -143,6 +164,7 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
         newPlayer();
         newBoss();
         newButton();
+        newLife();
 
         gameEndScreen();
 
@@ -239,7 +261,7 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
                         mPlayerDamage = mLifeCount;
                         if (temp < mPlayerDamage) {
                             mSoundPool.play(mDamage, 1.0F, 1.0F, 0, 0, 1.0F);
-                            temp = mPlayerDamage;
+                            mBitmaplife[mLifeDelete--].eraseColor(Color.TRANSPARENT);
                         }
 
                         if (mLifeCount >= PLAYER_LIFE) {
@@ -249,8 +271,11 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
                 }
 
                 //ボスに当たる
-                if (touchBoss(mBoss) >= PLAYER_LIFE)
+                if (touchBoss(mBoss) >= PLAYER_LIFE) {
+                    for (int i = 0; i < PLAYER_LIFE; i++)
+                        mBitmaplife[i].eraseColor(Color.TRANSPARENT);
                     mIsFailed = true;
+                }
 
                 //ボスに弾を当てる
                 for (StraightShoot straightShoot : mPlayerBulletList) {
@@ -303,6 +328,9 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
 
                 mPlayer.draw(mCanvas);
                 mBoss.draw(mCanvas);
+
+                for (int i = 0; i < PLAYER_LIFE; i++)
+                    mLife[i].draw(mCanvas);
 
                 getHolder().unlockCanvasAndPost(mCanvas);
             }
@@ -399,6 +427,13 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
             mBitmapBullet = null;
         }
 
+        for (int i = 0; i < PLAYER_LIFE; i++) {
+            if (mBitmaplife[i] != null) {
+                mBitmaplife[i].recycle();
+                mBitmaplife[i] = null;
+            }
+        }
+
 
         mStageOne.stop();
         mIsAttached = false;
@@ -421,6 +456,16 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
         mButton = new Image(mWidth / 2 - 140, mBitmapBoss.getHeight() * 3 + heightAdjust(70) * 3 + 2,
                 mWidth * 2 / 3, mBitmapBoss.getHeight() * 3 + heightAdjust(70) * 3 + 2 + 90,
                 mBitmapButton);
+    }
+
+    private void newLife() {
+        int top = mHeight - mBitmapBullet.getHeight() * 2;
+        int i = 0;
+
+        for (int left = mBitmapBullet.getWidth(); left <= mBitmapBullet.getWidth() * PLAYER_LIFE; left += mBitmapBullet.getWidth()) {
+            mLife[i] = new Image(left, top, mBitmaplife[i].getWidth(), mBitmaplife[i].getHeight(), mBitmaplife[i]);
+            i++;
+        }
     }
 
     private void newBossBulletOne() {
