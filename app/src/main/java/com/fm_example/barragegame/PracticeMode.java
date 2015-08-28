@@ -2,16 +2,20 @@ package com.fm_example.barragegame;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Region;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.support.annotation.StringRes;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -50,13 +54,22 @@ public class PracticeMode extends SurfaceView implements SurfaceHolder.Callback,
     private boolean mIsGameFive = false;
 
     private SoundPool mSoundPool;
+    private Image mButton;
 
     private MediaPlayer mStageBgm;
     private int mGetItem;
     private int mGetYellow;
     private int mGetRed;
+    private int mWarp;
+    private int mWarpCount;
+
+    private Path mGameEnd;
+    private Region mRegionGameEnd;
+
+    private Region mRegionWholeScreen;
 
 
+    private Bitmap mBitmapButton;
     private Bitmap mBitmapBullet;
     private Bitmap mBitmapItemOne;
     private Bitmap mBitmapItemTwo;
@@ -71,6 +84,7 @@ public class PracticeMode extends SurfaceView implements SurfaceHolder.Callback,
         mSoundPool = new SoundPool(8, AudioManager.STREAM_MUSIC, 0);
         mGetYellow = mSoundPool.load(context, R.raw.getyellow, 1);
         mGetRed = mSoundPool.load(context, R.raw.getred, 1);
+        mWarp = mSoundPool.load(context, R.raw.warp, 1);
 
         mHolder = getHolder();
         mHolder.addCallback(this);
@@ -92,6 +106,7 @@ public class PracticeMode extends SurfaceView implements SurfaceHolder.Callback,
         mBitmapPlayer = BitmapFactory.decodeResource(rsc, R.drawable.player_xxxhdpi_b);
         mBitmapItemOne = BitmapFactory.decodeResource(rsc, R.drawable.item_1);
         mBitmapItemTwo = BitmapFactory.decodeResource(rsc, R.drawable.item_2);
+        mBitmapButton = BitmapFactory.decodeResource(rsc, R.drawable.button_xxxhdpi);
 
         mBitmapItemOne = Bitmap.createScaledBitmap(mBitmapItemOne, mWidth / 17,
                 mHeight / 28, false);
@@ -102,12 +117,19 @@ public class PracticeMode extends SurfaceView implements SurfaceHolder.Callback,
         mBitmapPlayer = Bitmap.createScaledBitmap(mBitmapPlayer, mWidth / 10,
                 mHeight / 15, false);
 
+        mBitmapButton = Bitmap.createScaledBitmap(mBitmapButton, mWidth / 3,
+                mHeight / 20, false);
+
         mStageBgm = MediaPlayer.create(getContext(), R.raw.practice);
 
         this.mStageBgm.setLooping(true);
         mStageBgm.start();
 
         newPlayer();
+
+        newButton();
+
+        gameEndScreen();
 
 
         mIsAttached = true;
@@ -154,6 +176,10 @@ public class PracticeMode extends SurfaceView implements SurfaceHolder.Callback,
             mPlayer.setLocate(mWidth / 2, mHeight - (2 * mBitmapPlayer.getHeight()));
             newItemTwo();
             mIsGameTwo = true;
+            if (mWarpCount == 0) {
+                mSoundPool.play(mWarp, 2.0F, 2.0F, 0, 0, 1.0F);
+                mWarpCount--;
+            }
         }
 
         if (!mIsGameThree && mItemListYellow.isEmpty()) {
@@ -161,6 +187,10 @@ public class PracticeMode extends SurfaceView implements SurfaceHolder.Callback,
             mPlayer.setLocate(mWidth / 2, mHeight - (2 * mBitmapPlayer.getHeight()));
             newItemThree();
             mIsGameThree = true;
+            if (mWarpCount < 0) {
+                mSoundPool.play(mWarp, 2.0F, 2.0F, 0, 0, 1.0F);
+                mWarpCount = 5;
+            }
         }
 
         if (!mIsGameFour && mItemListYellow.isEmpty()) {
@@ -201,10 +231,13 @@ public class PracticeMode extends SurfaceView implements SurfaceHolder.Callback,
                     mPaint.setTextSize(heightAdjust(120));
                     mCanvas.drawText(msg, mBitmapPlayer.getWidth() * 2, mBitmapPlayer.getWidth(), mPaint);
                 } else {
+                    mSoundPool.play(mWarp, 2.0F, 2.0F, 0, 0, 1.0F);
+                    mBitmapPlayer.eraseColor(Color.TRANSPARENT);
+                    mButton.draw(mCanvas);
                     String msg = "ゲームクリア";
                     mPaint.setColor(Color.BLACK);
-                    mPaint.setTextSize(heightAdjust(120));
-                    mCanvas.drawText(msg, mBitmapPlayer.getWidth() * 3, mBitmapPlayer.getWidth(), mPaint);
+                    mPaint.setTextSize(heightAdjust(100));
+                    mCanvas.drawText(msg, mWidth / 3, mHeight / 2 - mBitmapPlayer.getWidth(), mPaint);
                 }
 
 
@@ -239,6 +272,34 @@ public class PracticeMode extends SurfaceView implements SurfaceHolder.Callback,
         return adjust;
     }
 
+    private void gameEndScreen() {
+        mRegionWholeScreen = new Region(0, 0, mWidth, mHeight);
+        mGameEnd = new Path();
+        mGameEnd.addRect(mWidth / 3, mHeight / 2,
+                mWidth / 2 - widthAdjust(160) + mBitmapButton.getWidth(), mHeight / 2 + mBitmapButton.getHeight(), Path.Direction.CW);
+        mRegionGameEnd = new Region();
+        mRegionGameEnd.setPath(mGameEnd, mRegionWholeScreen);
+
+    }
+
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                if (mIsGameThree) {
+                    if (mRegionGameEnd.contains((int) event.getX(), (int) event.getY())) {
+                        mStageBgm.stop();
+                        Intent i = new Intent(getContext(), MainActivity.class);
+                        getContext().startActivity(i);
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+        return true;
+    }
+
+
     @Override
     public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
     }
@@ -261,6 +322,12 @@ public class PracticeMode extends SurfaceView implements SurfaceHolder.Callback,
                 mBitmapPlayer);
         mIsFailed = false;
         mStartTime = System.currentTimeMillis();
+    }
+
+    private void newButton() {
+        mButton = new Image(mWidth / 3, mHeight / 2,
+                mBitmapButton.getWidth(), mBitmapButton.getHeight(),
+                mBitmapButton);
     }
 
     private void newItemOne() {

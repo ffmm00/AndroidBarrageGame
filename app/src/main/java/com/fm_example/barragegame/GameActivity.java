@@ -23,11 +23,13 @@ import java.util.List;
 import java.util.Random;
 
 import android.media.MediaPlayer;
+import android.widget.ProgressBar;
 
 public class GameActivity extends SurfaceView implements SurfaceHolder.Callback, Runnable {
 
     private static final int SAFE_AREA = 73;
     private int mLifeCount = 0;
+    private CharacterMove mGameActivity;
 
     private static final int BULLETS = 10;
 
@@ -100,6 +102,8 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
 
     private Path mGameEnd;
     private Region mRegionGameEnd;
+    private Path mBossHpZone;
+    private Region mRegionBossHpZone;
 
     private Region mRegionWholeScreen;
 
@@ -207,7 +211,9 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
             return;
         }
 
+
         mPlayer.move(CharacterMove.role, CharacterMove.pitch);
+
 
         if (mPlayer.getButton() > mHeight) {
             mPlayer.setLocate(mPlayer.getLeft(), mHeight - mBitmapPlayer.getHeight());
@@ -302,6 +308,20 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
             if (mCanvas != null) {
                 mCanvas.drawColor(Color.LTGRAY);
 
+                mBossHpZone = new Path();
+                mBossHpZone.addRect(mBitmapBullet.getHeight(), mBitmapBullet.getHeight(),
+                        widthAdjust(3 * (FIRST_BOSS_LIFE - mBossDamage)) + mBitmapBullet.getHeight()
+                        , mBitmapBullet.getHeight() + mBitmapPlayer.getHeight(), Path.Direction.CW);
+                mRegionBossHpZone = new Region();
+                mRegionBossHpZone.setPath(mBossHpZone, mRegionWholeScreen);
+
+                if (!mIsBossPowerUp) {
+                    mPaint.setColor(Color.BLUE);
+                    mCanvas.drawPath(mBossHpZone, mPaint);
+                } else {
+                    mPaint.setColor(Color.RED);
+                    mCanvas.drawPath(mBossHpZone, mPaint);
+                }
 
                 //衝突チェック
                 if (!mIsClear) {
@@ -356,6 +376,8 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
                 if (mIsClear || mIsFailed) {
                     mBitmapPlayer.eraseColor(Color.TRANSPARENT);
                     mBitmapBoss.eraseColor(Color.TRANSPARENT);
+                    mPaint.setColor(Color.LTGRAY);
+                    mCanvas.drawPath(mBossHpZone, mPaint);
                     mButton.draw(mCanvas);
                     String msg = gameScore();
                     mPaint.setTextSize(heightAdjust(70));
@@ -412,10 +434,11 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         return adjust;
     }
 
+
     private void gameEndScreen() {
         mRegionWholeScreen = new Region(0, 0, mWidth, mHeight);
         mGameEnd = new Path();
-        mGameEnd.addRect(mWidth / 2 - 140, mBitmapBoss.getHeight() * 3 + heightAdjust(70) * 3 + 2,
+        mGameEnd.addRect(mWidth / 2 - widthAdjust(160), mBitmapBoss.getHeight() * 3 + heightAdjust(70) * 3 + 2,
                 mWidth / 2 - 140 + mBitmapButton.getWidth(), mBitmapBoss.getHeight() * 3 + heightAdjust(70) * 3 + 2 + 90, Path.Direction.CW);
         mRegionGameEnd = new Region();
         mRegionGameEnd.setPath(mGameEnd, mRegionWholeScreen);
@@ -507,7 +530,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
     }
 
     private void newButton() {
-        mButton = new Image(mWidth / 2 - 140, mBitmapBoss.getHeight() * 3 + heightAdjust(70) * 3 + 2,
+        mButton = new Image(mWidth / 2 - widthAdjust(160), mBitmapBoss.getHeight() * 3 + heightAdjust(70) * 3 + 2,
                 mWidth * 2 / 3, mBitmapBoss.getHeight() * 3 + heightAdjust(70) * 3 + 2 + 90,
                 mBitmapButton);
     }

@@ -17,6 +17,7 @@ import android.media.SoundPool;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,6 +28,7 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
 
     private static final int SAFE_AREA = 73;
     private int mLifeCount = 0;
+    private BossMove mBossMove;
 
     private static final int FIRST_BOSS_LIFE = 350;
     private static final int PLAYER_LIFE = 5;
@@ -94,7 +96,10 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
 
 
     private Bitmap mBitmapBullet;
+    private Path mBossHpZone;
+    private Region mRegionBossHpZone;
 
+    private ProgressBar mProgressBar;
     private List<BulletObject> mBulletList = new ArrayList<BulletObject>();
     private List<StraightShoot> mPlayerBulletList = new ArrayList<StraightShoot>();
 
@@ -103,6 +108,7 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
     public BossMode(Context context) {
         super(context);
 
+        mBossMove = (BossMove) context;
         mSoundPool = new SoundPool(11, AudioManager.STREAM_MUSIC, 0);
         mDamage = mSoundPool.load(context, R.raw.damage_2, 1);
         mFail = mSoundPool.load(context, R.raw.failedsound, 1);
@@ -111,6 +117,7 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
         mHolder = getHolder();
         mHolder.addCallback(this);
     }
+
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
@@ -251,6 +258,18 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
             if (mCanvas != null) {
                 mCanvas.drawColor(Color.LTGRAY);
 
+                mBossHpZone = new Path();
+                mBossHpZone.addRect(mBitmapBullet.getHeight(), mBitmapBullet.getHeight(),
+                        mBitmapBullet.getHeight() + mBitmapPlayer.getHeight(),
+                        mBitmapBullet.getHeight() + heightAdjust((3 * (FIRST_BOSS_LIFE - mBossDamage))), Path.Direction.CW);
+
+
+                mRegionBossHpZone = new Region();
+                mRegionBossHpZone.setPath(mBossHpZone, mRegionWholeScreen);
+
+                mPaint.setColor(Color.BLUE);
+                mCanvas.drawPath(mBossHpZone, mPaint);
+
 
                 //衝突チェック
                 if (!mIsClear) {
@@ -304,6 +323,8 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
                 if (mIsClear || mIsFailed) {
                     mBitmapPlayer.eraseColor(Color.TRANSPARENT);
                     mBitmapBoss.eraseColor(Color.TRANSPARENT);
+                    mPaint.setColor(Color.LTGRAY);
+                    mCanvas.drawPath(mBossHpZone, mPaint);
                     mButton.draw(mCanvas);
                     String msg = gameScore();
                     mPaint.setTextSize(heightAdjust(70));
@@ -367,8 +388,6 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
                 mWidth / 2 - 140 + mBitmapButton.getWidth(), mBitmapBoss.getHeight() * 3 + heightAdjust(70) * 3 + 2 + 90, Path.Direction.CW);
         mRegionGameEnd = new Region();
         mRegionGameEnd.setPath(mGameEnd, mRegionWholeScreen);
-
-
     }
 
     public boolean onTouchEvent(MotionEvent event) {
@@ -403,6 +422,19 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
         if (mScore < 0)
             mScore = 0;
         return ("スコア：" + mScore);
+    }
+
+
+    public void showDialog() {
+        mBossMove.PostRunnable(new Runnable() {
+            @Override
+            public void run() {
+                //ダイアログの作成＆表示
+                //ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressbar);
+
+            }
+
+        });
     }
 
 

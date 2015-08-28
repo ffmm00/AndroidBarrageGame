@@ -7,6 +7,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.WindowManager;
 
 public class BossMove extends Activity implements SensorEventListener {
@@ -20,6 +21,7 @@ public class BossMove extends Activity implements SensorEventListener {
     private float[] mgValues = new float[3];
     private float[] acValues = new float[3];
 
+    private Handler mHandler = new Handler();
 
     public static int pitch = 0;
     public static int role = 0;
@@ -36,6 +38,10 @@ public class BossMove extends Activity implements SensorEventListener {
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMagField = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+    }
+
+    public void PostRunnable(final Runnable run) {
+        mHandler.post(run);
     }
 
 
