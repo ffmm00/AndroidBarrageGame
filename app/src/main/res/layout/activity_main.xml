@@ -12,16 +12,18 @@
         android:text="ステージ１"
         android:id="@+id/button1"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="171dp" />
+        android:layout_alignRight="@+id/button4"
+        android:layout_alignEnd="@+id/button4"
+        android:layout_marginTop="115dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="ステージ２"
         android:id="@+id/button2"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_below="@+id/button1"
+        android:layout_alignLeft="@+id/button9"
+        android:layout_alignStart="@+id/button9" />
 
     <Button
         android:layout_width="wrap_content"
@@ -39,6 +41,31 @@
         android:text="ボスモード１"
         android:id="@+id/button4"
         android:layout_below="@+id/button2"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ボスモードB"
+        android:id="@+id/button8"
+        android:layout_below="@+id/button9"
+        android:layout_alignLeft="@+id/button3"
+        android:layout_alignStart="@+id/button3" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ボスモードA"
+        android:id="@+id/button9"
+        android:layout_below="@+id/button3"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ボスモードC"
+        android:id="@+id/button10"
+        android:layout_below="@+id/button8"
         android:layout_centerHorizontal="true" />
 
 

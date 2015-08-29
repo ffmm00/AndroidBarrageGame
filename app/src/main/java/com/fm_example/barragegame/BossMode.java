@@ -31,7 +31,7 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
     private BossMove mBossMove;
 
     private static final int FIRST_BOSS_LIFE = 350;
-    private static final int PLAYER_LIFE = 5;
+    private static final int PLAYER_LIFE = 6;
     private static final int BASE_TIME = 120;
 
     private int mWidth;
@@ -71,16 +71,18 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
     private Bitmap mBitmapLife_2;
     private Bitmap mBitmapLife_3;
     private Bitmap mBitmapLife_4;
+    private Bitmap mBitmapLife_5;
 
-    private Bitmap[] mBitmaplife = {mBitmapLife_0, mBitmapLife_1, mBitmapLife_2, mBitmapLife_3, mBitmapLife_4};
+    private Bitmap[] mBitmaplife = {mBitmapLife_0, mBitmapLife_1, mBitmapLife_2, mBitmapLife_3, mBitmapLife_4, mBitmapLife_5};
 
     private Image mLife_0;
     private Image mLife_1;
     private Image mLife_2;
     private Image mLife_3;
     private Image mLife_4;
+    private Image mLife_5;
 
-    private Image[] mLife = {mLife_0, mLife_1, mLife_2, mLife_3, mLife_4};
+    private Image[] mLife = {mLife_0, mLife_1, mLife_2, mLife_3, mLife_4, mLife_5};
 
     private Path mGameEnd;
     private Region mRegionGameEnd;
@@ -99,7 +101,6 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
     private Path mBossHpZone;
     private Region mRegionBossHpZone;
 
-    private ProgressBar mProgressBar;
     private List<BulletObject> mBulletList = new ArrayList<BulletObject>();
     private List<StraightShoot> mPlayerBulletList = new ArrayList<StraightShoot>();
 
@@ -108,7 +109,6 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
     public BossMode(Context context) {
         super(context);
 
-        mBossMove = (BossMove) context;
         mSoundPool = new SoundPool(11, AudioManager.STREAM_MUSIC, 0);
         mDamage = mSoundPool.load(context, R.raw.damage_2, 1);
         mFail = mSoundPool.load(context, R.raw.failedsound, 1);
@@ -425,17 +425,6 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
     }
 
 
-    public void showDialog() {
-        mBossMove.PostRunnable(new Runnable() {
-            @Override
-            public void run() {
-                //ダイアログの作成＆表示
-                //ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressbar);
-
-            }
-
-        });
-    }
 
 
     @Override
@@ -473,7 +462,7 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
     }
 
     private void newPlayer() {
-        mPlayer = new PlayerChara(mWidth / 2, mHeight - (2 * mBitmapPlayer.getHeight()), mBitmapPlayer.getWidth(), mBitmapPlayer.getHeight(),
+        mPlayer = new PlayerChara(mBitmapPlayer.getWidth(), mHeight - (2 * mBitmapPlayer.getHeight()), mBitmapPlayer.getWidth(), mBitmapPlayer.getHeight(),
                 mBitmapPlayer);
         mIsFailed = false;
         mStartTime = System.currentTimeMillis();
