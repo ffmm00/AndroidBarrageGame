@@ -45,6 +45,14 @@
             android:screenOrientation="portrait"
             android:name=".BossMoveThree"
             android:label="@string/title_activity_game"></activity>
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".BossMoveSix"
+            android:label="@string/title_activity_game"></activity>
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".BossMoveFive"
+            android:label="@string/title_activity_game"></activity>
     </application>
 
 </manifest>

@@ -68,5 +68,24 @@
         android:layout_below="@+id/button8"
         android:layout_centerHorizontal="true" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ボスモードD"
+        android:id="@+id/button11"
+        android:layout_above="@+id/button10"
+        android:layout_alignLeft="@+id/button12"
+        android:layout_alignStart="@+id/button12" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ボスモードE"
+        android:id="@+id/button12"
+        android:layout_alignBottom="@+id/button3"
+        android:layout_toLeftOf="@+id/button3"
+        android:layout_toStartOf="@+id/button3" />
+
 
 </RelativeLayout>
