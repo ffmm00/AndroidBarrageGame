@@ -51,6 +51,14 @@
             android:label="@string/title_activity_game"></activity>
         <activity
             android:screenOrientation="portrait"
+            android:name=".BossMoveSeven"
+            android:label="@string/title_activity_game"></activity>
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".BossMoveEight"
+            android:label="@string/title_activity_game"></activity>
+        <activity
+            android:screenOrientation="portrait"
             android:name=".BossMoveFive"
             android:label="@string/title_activity_game"></activity>
     </application>

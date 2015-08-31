@@ -117,6 +117,26 @@ public class MainActivity extends Activity {
             }
         });
 
+        Button btnNextf = (Button) this.findViewById(R.id.button13);
+        btnNextf.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mOpening.stop();
+                Intent intent = new Intent(MainActivity.this, BossMoveSeven.class);
+                startActivity(intent);
+            }
+        });
+
+        Button btnNextg = (Button) this.findViewById(R.id.button14);
+        btnNextg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mOpening.stop();
+                Intent intent = new Intent(MainActivity.this, BossMoveEight.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
     @Override
