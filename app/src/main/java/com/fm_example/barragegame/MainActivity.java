@@ -26,26 +26,6 @@ public class MainActivity extends Activity {
 
         mOpening.start();
 
-        Button btnNext3 = (Button) this.findViewById(R.id.button1);
-        btnNext3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mOpening.stop();
-                Intent intent = new Intent(MainActivity.this, PracticeModeMove.class);
-                startActivity(intent);
-            }
-        });
-
-        Button btnNext2 = (Button) this.findViewById(R.id.button2);
-        btnNext2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mOpening.stop();
-                Intent intent = new Intent(MainActivity.this, AvoidModeMove.class);
-                startActivity(intent);
-            }
-        });
-
 
         Button btnNext = (Button) this.findViewById(R.id.button3);
         btnNext.setOnClickListener(new View.OnClickListener() {
@@ -97,15 +77,6 @@ public class MainActivity extends Activity {
             }
         });
 
-        Button btnNextd = (Button) this.findViewById(R.id.button11);
-        btnNextd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mOpening.stop();
-                Intent intent = new Intent(MainActivity.this, BossMoveFive.class);
-                startActivity(intent);
-            }
-        });
 
         Button btnNexte = (Button) this.findViewById(R.id.button12);
         btnNexte.setOnClickListener(new View.OnClickListener() {

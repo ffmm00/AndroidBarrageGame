@@ -104,6 +104,8 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
     private Region mRegionGameEnd;
     private Path mBossHpZone;
     private Region mRegionBossHpZone;
+    private Path mHpGage;
+    private Region mRegionHpGage;
 
     private Region mRegionWholeScreen;
 
@@ -113,6 +115,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
     private int mDamage;
     private int mClear;
     private int mFail;
+    private Bitmap mBackGround;
 
     private Bitmap mBitmapBullet;
 
@@ -153,6 +156,8 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         mBitmapPlayerBullet = BitmapFactory.decodeResource(rsc, R.drawable.playerbullet_xxxhdpi);
         mBitmapButton = BitmapFactory.decodeResource(rsc, R.drawable.button_xxxhdpi);
 
+        mBackGround = BitmapFactory.decodeResource(rsc, R.drawable.background_13);
+
 
         for (int i = 0; i < PLAYER_LIFE; i++) {
             mBitmaplife[i] = BitmapFactory.decodeResource(rsc, R.drawable.life_xxxhdpi);
@@ -167,8 +172,8 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         mBitmapBoss = Bitmap.createScaledBitmap(mBitmapBoss, mWidth / 4,
                 mHeight / 8, false);
 
-        mBitmapBullet = Bitmap.createScaledBitmap(mBitmapBullet, mWidth / 24,
-                mHeight / 38, false);
+        mBitmapBullet = Bitmap.createScaledBitmap(mBitmapBullet, mWidth / 26,
+                mHeight / 40, false);
 
         mBitmapPlayerBullet = Bitmap.createScaledBitmap(mBitmapPlayerBullet, mWidth / 24,
                 mHeight / 38, false);
@@ -256,7 +261,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
             mHorizonalBulletRightSecondSave = mSecond;
         }
 
-        if (mSecond - mBossBulletSecondSave == 11) {
+        if (mSecond - mBossBulletSecondSave == 12) {
             newBossBulletLeft();
             newBossBulletRight();
             mBossBulletSecondSave = mSecond;
@@ -264,7 +269,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
 
 
         if (mIsBossPowerUp) {
-            if (mSecond - mBossBulletSecondVerTwoSave == 11) {
+            if (mSecond - mBossBulletSecondVerTwoSave == 20) {
                 newBossDiagnalBulletLeft();
                 newBossDiagnalBulletRight();
                 newBossBulletCenter();
@@ -306,22 +311,10 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
 
             mCanvas = getHolder().lockCanvas();
             if (mCanvas != null) {
-                mCanvas.drawColor(Color.LTGRAY);
+                mCanvas.drawBitmap(mBackGround, 0, 0, mPaint);
+                mPaint.setColor(Color.BLACK);
+                mCanvas.drawPath(mHpGage, mPaint);
 
-                mBossHpZone = new Path();
-                mBossHpZone.addRect(mBitmapBullet.getHeight(), mBitmapBullet.getHeight(),
-                        widthAdjust(3 * (FIRST_BOSS_LIFE - mBossDamage)) + mBitmapBullet.getHeight()
-                        , mBitmapBullet.getHeight() + mBitmapPlayer.getHeight(), Path.Direction.CW);
-                mRegionBossHpZone = new Region();
-                mRegionBossHpZone.setPath(mBossHpZone, mRegionWholeScreen);
-
-                if (!mIsBossPowerUp) {
-                    mPaint.setColor(Color.BLUE);
-                    mCanvas.drawPath(mBossHpZone, mPaint);
-                } else {
-                    mPaint.setColor(Color.RED);
-                    mCanvas.drawPath(mBossHpZone, mPaint);
-                }
 
                 //衝突チェック
                 if (!mIsClear) {
@@ -357,8 +350,25 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
                     }
                 }
 
+                mBossHpZone = new Path();
+                mBossHpZone.addRect(mBitmapBullet.getHeight(), mBitmapBullet.getHeight(),
+                        widthAdjust(3 * (FIRST_BOSS_LIFE - mBossDamage)) + mBitmapBullet.getHeight()
+                        , mBitmapBullet.getHeight() + mBitmapPlayer.getHeight(), Path.Direction.CW);
+                mRegionBossHpZone = new Region();
+                mRegionBossHpZone.setPath(mBossHpZone, mRegionWholeScreen);
+
+                if (!mIsBossPowerUp) {
+                    mPaint.setARGB(255, 166, 62, 148);
+                    mCanvas.drawPath(mBossHpZone, mPaint);
+                } else {
+                    mPaint.setARGB(255, 169, 22, 40);
+                    mCanvas.drawPath(mBossHpZone, mPaint);
+                }
+
                 if (mIsClear) {
                     mSoundPool.play(mClear, 2.0F, 2.0F, 0, 0, 1.0F);
+                    mPaint.setColor(Color.TRANSPARENT);
+                    mCanvas.drawPath(mHpGage, mPaint);
                     String msg = "ゲームクリア";
                     mPaint.setColor(Color.BLACK);
                     mPaint.setTextSize(heightAdjust(70));
@@ -443,6 +453,13 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         mRegionGameEnd = new Region();
         mRegionGameEnd.setPath(mGameEnd, mRegionWholeScreen);
 
+        mHpGage = new Path();
+        mHpGage.addRect(mBitmapBullet.getHeight(), mBitmapBullet.getHeight(),
+                widthAdjust(3 * (FIRST_BOSS_LIFE)) + mBitmapBullet.getHeight()
+                , mBitmapBullet.getHeight() + mBitmapPlayer.getHeight(), Path.Direction.CW);
+
+        mRegionHpGage = new Region();
+        mRegionHpGage.setPath(mHpGage, mRegionWholeScreen);
 
     }
 

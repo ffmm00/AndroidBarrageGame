@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PorterDuff;
 import android.graphics.Region;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -96,10 +97,13 @@ public class BossModeEight extends SurfaceView implements SurfaceHolder.Callback
     private int mClear;
     private int mFail;
 
+    private Bitmap mBackGround;
 
     private Bitmap mBitmapBullet;
     private Path mBossHpZone;
     private Region mRegionBossHpZone;
+    private Path mHpGage;
+    private Region mRegionHpGage;
 
     private List<BulletObject> mBulletList = new ArrayList<BulletObject>();
     private List<StraightShoot> mPlayerBulletList = new ArrayList<StraightShoot>();
@@ -137,6 +141,7 @@ public class BossModeEight extends SurfaceView implements SurfaceHolder.Callback
         mBitmapPlayerBullet = BitmapFactory.decodeResource(rsc, R.drawable.playerbullet_xxxhdpi);
         mBitmapButton = BitmapFactory.decodeResource(rsc, R.drawable.button_xxxhdpi);
 
+        mBackGround = BitmapFactory.decodeResource(rsc, R.drawable.background_4);
 
         mBitmapPlayer = Bitmap.createScaledBitmap(mBitmapPlayer, mWidth / 10,
                 mHeight / 15, false);
@@ -244,20 +249,11 @@ public class BossModeEight extends SurfaceView implements SurfaceHolder.Callback
 
             mCanvas = getHolder().lockCanvas();
             if (mCanvas != null) {
-                mCanvas.drawColor(Color.LTGRAY);
 
-                mBossHpZone = new Path();
-                mBossHpZone.addRect(mBitmapBullet.getHeight(), mBitmapBullet.getHeight(),
-                        mBitmapBullet.getHeight() + mBitmapPlayer.getHeight(),
-                        mBitmapBullet.getHeight() + heightAdjust((3 * (FIRST_BOSS_LIFE - mBossDamage))), Path.Direction.CW);
+                mCanvas.drawBitmap(mBackGround, 0, 0, mPaint);
 
-
-                mRegionBossHpZone = new Region();
-                mRegionBossHpZone.setPath(mBossHpZone, mRegionWholeScreen);
-
-                mPaint.setColor(Color.BLUE);
-                mCanvas.drawPath(mBossHpZone, mPaint);
-
+                mPaint.setColor(Color.BLACK);
+                mCanvas.drawPath(mHpGage, mPaint);
 
                 //衝突チェック
                 if (!mIsClear) {
@@ -301,10 +297,22 @@ public class BossModeEight extends SurfaceView implements SurfaceHolder.Callback
                     }
                 }
 
+                mBossHpZone = new Path();
+                mBossHpZone.addRect(mBitmapBullet.getHeight(), mBitmapBullet.getHeight(),
+                        mBitmapBullet.getHeight() + mBitmapPlayer.getHeight(),
+                        mBitmapBullet.getHeight() + heightAdjust((3 * (FIRST_BOSS_LIFE - mBossDamage))), Path.Direction.CW);
+
+
+                mRegionBossHpZone = new Region();
+                mRegionBossHpZone.setPath(mBossHpZone, mRegionWholeScreen);
+
+                mPaint.setARGB(255, 83, 197, 213);
+                mCanvas.drawPath(mBossHpZone, mPaint);
+
                 if (mIsClear) {
                     mSoundPool.play(mClear, 2.0F, 2.0F, 0, 0, 1.0F);
                     String msg = "ゲームクリア";
-                    mPaint.setColor(Color.BLACK);
+                    mPaint.setColor(Color.WHITE);
                     mPaint.setTextSize(heightAdjust(70));
                     mCanvas.drawText(msg, mWidth / 2 - 100, mBitmapBoss.getHeight() * 3, mPaint);
                 }
@@ -313,19 +321,17 @@ public class BossModeEight extends SurfaceView implements SurfaceHolder.Callback
                     mSoundPool.play(mFail, 2.0F, 2.0F, 0, 0, 1.0F);
                     String msg = "攻略失敗";
                     mPaint.setTextSize(heightAdjust(70));
-                    mPaint.setColor(Color.BLACK);
+                    mPaint.setColor(Color.WHITE);
                     mCanvas.drawText(msg, mWidth / 2 - 100, mBitmapBoss.getHeight() * 3, mPaint);
                 }
 
                 if (mIsClear || mIsFailed) {
                     mBitmapPlayer.eraseColor(Color.TRANSPARENT);
                     mBitmapBoss.eraseColor(Color.TRANSPARENT);
-                    mPaint.setColor(Color.LTGRAY);
-                    mCanvas.drawPath(mBossHpZone, mPaint);
                     mButton.draw(mCanvas);
                     String msg = gameScore();
                     mPaint.setTextSize(heightAdjust(70));
-                    mPaint.setColor(Color.BLACK);
+                    mPaint.setColor(Color.WHITE);
                     mCanvas.drawText(msg, mWidth / 2 - 120, mBitmapBoss.getHeight() * 3 + heightAdjust(70) + 2, mPaint);
                     String endmsg = "タイトルに戻る";
                     mCanvas.drawText(endmsg, mWidth / 2 - 120, mBitmapBoss.getHeight() * 3 + heightAdjust(70) * 2 + 2, mPaint);
@@ -385,6 +391,15 @@ public class BossModeEight extends SurfaceView implements SurfaceHolder.Callback
                 mWidth / 2 - 140 + mBitmapButton.getWidth(), mBitmapBoss.getHeight() * 3 + heightAdjust(70) * 3 + 2 + 90, Path.Direction.CW);
         mRegionGameEnd = new Region();
         mRegionGameEnd.setPath(mGameEnd, mRegionWholeScreen);
+
+        mHpGage = new Path();
+        mHpGage.addRect(mBitmapBullet.getHeight(), mBitmapBullet.getHeight(),
+                mBitmapBullet.getHeight() + mBitmapPlayer.getHeight(),
+                mBitmapBullet.getHeight() + heightAdjust((3 * (FIRST_BOSS_LIFE))), Path.Direction.CW);
+
+        mRegionHpGage = new Region();
+        mRegionHpGage.setPath(mHpGage, mRegionWholeScreen);
+
     }
 
     public boolean onTouchEvent(MotionEvent event) {
