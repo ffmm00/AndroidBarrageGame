@@ -30,7 +30,7 @@ public class BossModeEight extends SurfaceView implements SurfaceHolder.Callback
     private int mLifeCount = 0;
     private BossMove mBossMove;
 
-    private static final int FIRST_BOSS_LIFE = 350;
+    private static final int FIRST_BOSS_LIFE = 400;
     private static final int PLAYER_LIFE = 6;
     private static final int BASE_TIME = 120;
 
@@ -66,6 +66,7 @@ public class BossModeEight extends SurfaceView implements SurfaceHolder.Callback
     private int mLifeDelete = PLAYER_LIFE - 1;
     private int mBullet;
     private int mBulletSave;
+    private Bitmap mBitmapBullet_2;
 
     private Bitmap mBitmapLife_0;
     private Bitmap mBitmapLife_1;
@@ -139,6 +140,7 @@ public class BossModeEight extends SurfaceView implements SurfaceHolder.Callback
         mBitmapBoss = BitmapFactory.decodeResource(rsc, R.drawable.boss_11);
         mBitmapBullet = BitmapFactory.decodeResource(rsc, R.drawable.bossbullet_xxxhdpi);
         mBitmapPlayerBullet = BitmapFactory.decodeResource(rsc, R.drawable.playerbullet_xxxhdpi);
+        mBitmapBullet_2 = BitmapFactory.decodeResource(rsc, R.drawable.bigbullet_2);
         mBitmapButton = BitmapFactory.decodeResource(rsc, R.drawable.button_xxxhdpi);
 
         mBackGround = BitmapFactory.decodeResource(rsc, R.drawable.background_4);
@@ -158,6 +160,9 @@ public class BossModeEight extends SurfaceView implements SurfaceHolder.Callback
         mBitmapButton = Bitmap.createScaledBitmap(mBitmapButton, mWidth / 3,
                 mHeight / 20, false);
 
+        mBitmapBullet_2 = Bitmap.createScaledBitmap(mBitmapBullet, mWidth / 14,
+                mHeight / 21, false);
+
         for (int i = 0; i < PLAYER_LIFE; i++) {
             mBitmaplife[i] = BitmapFactory.decodeResource(rsc, R.drawable.life_xxxhdpi);
             mBitmaplife[i] = Bitmap.createScaledBitmap(mBitmaplife[i], mWidth / 23,
@@ -166,7 +171,7 @@ public class BossModeEight extends SurfaceView implements SurfaceHolder.Callback
 
         mSafeArea = heightAdjust(SAFE_AREA);
 
-        mStageOne = MediaPlayer.create(getContext(), R.raw.stagefirst);
+        mStageOne = MediaPlayer.create(getContext(), R.raw.bgm_8);
 
         this.mStageOne.setLooping(true);
         mStageOne.start();
@@ -283,9 +288,9 @@ public class BossModeEight extends SurfaceView implements SurfaceHolder.Callback
                 //ボスに弾を当てる
                 for (StraightShoot straightShoot : mPlayerBulletList) {
                     mBossDamage = mBoss.shotCheck(straightShoot);
-                    if (mBossDamage - mBulletSave == 5) {
+                    if (mBossDamage - mBulletSave == 8) {
                         BulletObject bossBullet;
-                        int left = mPlayer.getCenterX();
+                        int left = mPlayer.getCenterX() - mBitmapBullet.getWidth();
                         int top = mBoss.getButton();
                         int ySpeed = heightAdjust(7);
                         bossBullet = new StraightShoot(left, top, mBitmapBullet.getWidth(), mBitmapBullet.getHeight(), 0, ySpeed);
@@ -341,7 +346,7 @@ public class BossModeEight extends SurfaceView implements SurfaceHolder.Callback
                 if (!((mIsClear) || (mIsFailed))) {
                     mPaint.setColor(Color.DKGRAY);
                     for (BulletObject bulletObject : mBulletList) {
-                        mCanvas.drawBitmap(mBitmapBullet, bulletObject.getLeft(), bulletObject.getTop(), null);
+                        mCanvas.drawBitmap(mBitmapBullet_2, bulletObject.getLeft(), bulletObject.getTop(), null);
                     }
 
                     for (StraightShoot playershoot : mPlayerBulletList) {
@@ -453,9 +458,14 @@ public class BossModeEight extends SurfaceView implements SurfaceHolder.Callback
             mBitmapBoss = null;
         }
 
-        if (mBitmapBullet != null) {
-            mBitmapBullet.recycle();
-            mBitmapBullet = null;
+        if (mBitmapBullet_2 != null) {
+            mBitmapBullet_2.recycle();
+            mBitmapBullet_2 = null;
+        }
+
+        if (mBackGround != null) {
+            mBackGround.recycle();
+            mBackGround = null;
         }
 
         for (int i = 0; i < PLAYER_LIFE; i++) {
@@ -499,28 +509,6 @@ public class BossModeEight extends SurfaceView implements SurfaceHolder.Callback
         }
     }
 
-    private void newBossBulletOne() {
-        BulletObject bossBullet;
-
-
-        for (int left = mBoss.getLeft(); left <= mBoss.getLeft() + mBitmapBullet.getWidth() * 6; left += mBitmapBullet.getWidth() * 2) {
-            int top = mBoss.getCenterY();
-            int ySpeed = heightAdjust(8);
-            bossBullet = new StraightShoot(left, top, mBitmapBullet.getWidth(), mBitmapBullet.getHeight(), 0, ySpeed);
-            mBulletList.add(bossBullet);
-        }
-    }
-
-    private void newBossBulletTwo() {
-        BulletObject bossBullet;
-
-        int left = mBoss.getCenterX();
-        int top = mBoss.getButton();
-        int ySpeed = heightAdjust(7);
-        bossBullet = new StraightShoot(left, top, mBitmapBullet.getWidth(), mBitmapBullet.getHeight(), 0, ySpeed);
-        mBulletList.add(bossBullet);
-
-    }
 
     private void newPlayerBullet() {
         StraightShoot straightShoot;

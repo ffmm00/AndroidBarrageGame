@@ -47,36 +47,6 @@ public class MainActivity extends Activity {
             }
         });
 
-        Button btnNexta = (Button) this.findViewById(R.id.button8);
-        btnNexta.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mOpening.stop();
-                Intent intent = new Intent(MainActivity.this, BossMoveTwo.class);
-                startActivity(intent);
-            }
-        });
-
-        Button btnNextb = (Button) this.findViewById(R.id.button9);
-        btnNextb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mOpening.stop();
-                Intent intent = new Intent(MainActivity.this, BossMoveThree.class);
-                startActivity(intent);
-            }
-        });
-
-        Button btnNextc = (Button) this.findViewById(R.id.button10);
-        btnNextc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mOpening.stop();
-                Intent intent = new Intent(MainActivity.this, BossMoveFour.class);
-                startActivity(intent);
-            }
-        });
-
 
         Button btnNexte = (Button) this.findViewById(R.id.button12);
         btnNexte.setOnClickListener(new View.OnClickListener() {
@@ -88,15 +58,6 @@ public class MainActivity extends Activity {
             }
         });
 
-        Button btnNextf = (Button) this.findViewById(R.id.button13);
-        btnNextf.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mOpening.stop();
-                Intent intent = new Intent(MainActivity.this, BossMoveSeven.class);
-                startActivity(intent);
-            }
-        });
 
         Button btnNextg = (Button) this.findViewById(R.id.button14);
         btnNextg.setOnClickListener(new View.OnClickListener() {

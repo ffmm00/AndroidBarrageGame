@@ -30,7 +30,7 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
     private int mLifeCount = 0;
     private BossMove mBossMove;
 
-    private static final int FIRST_BOSS_LIFE = 350;
+    private static final int FIRST_BOSS_LIFE = 330;
     private static final int PLAYER_LIFE = 6;
     private static final int BASE_TIME = 120;
 
@@ -64,6 +64,7 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
     private Bitmap mBitmapButton;
     private Image mButton;
     private int mLifeDelete = PLAYER_LIFE - 1;
+    private int mBulletTwoSecondSave;
     private int mBullet;
 
     private Bitmap mBitmapLife_0;
@@ -89,6 +90,7 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
 
     private Region mRegionWholeScreen;
 
+    private Bitmap mBackGround;
     private SoundPool mSoundPool;
 
     private MediaPlayer mStageOne;
@@ -134,16 +136,17 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
 
         mBitmapPlayer = BitmapFactory.decodeResource(rsc, R.drawable.player_xxxhdpi_b);
 
-        mBitmapBoss = BitmapFactory.decodeResource(rsc, R.drawable.boss_2);
+        mBitmapBoss = BitmapFactory.decodeResource(rsc, R.drawable.boss_5);
         mBitmapBullet = BitmapFactory.decodeResource(rsc, R.drawable.bossbullet_xxxhdpi);
         mBitmapPlayerBullet = BitmapFactory.decodeResource(rsc, R.drawable.playerbullet_xxxhdpi);
         mBitmapButton = BitmapFactory.decodeResource(rsc, R.drawable.button_xxxhdpi);
 
+        mBackGround = BitmapFactory.decodeResource(rsc, R.drawable.background_7);
 
         mBitmapPlayer = Bitmap.createScaledBitmap(mBitmapPlayer, mWidth / 10,
                 mHeight / 15, false);
 
-        mBitmapBoss = Bitmap.createScaledBitmap(mBitmapBoss, mWidth / 3,
+        mBitmapBoss = Bitmap.createScaledBitmap(mBitmapBoss, mWidth / 4,
                 mHeight / 7, false);
 
         mBitmapBullet = Bitmap.createScaledBitmap(mBitmapBullet, mWidth / 22,
@@ -215,6 +218,7 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
         if (mSecond == 1) {
             mPlayerBulletSecondSave = 0;
             mBulletOneSecondSave = 0;
+            mBulletTwoSecondSave = 0;
         }
 
         if (mSecond - mPlayerBulletSecondSave == 2) {
@@ -227,15 +231,21 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
             mBulletOneSecondSave = mSecond;
         }
 
+        if (mSecond - mBulletTwoSecondSave == 25) {
+            newBossBulletTwo();
+            mBulletTwoSecondSave = mSecond;
+        }
+
+
         if (!mIsBossMove) {
             mBoss.move(4, 0);
-            if (mBoss.getRight() >= getWidth() - mBitmapPlayer.getWidth() * 3 / 2)
+            if (mBoss.getRight() >= getWidth() - mBitmapPlayer.getWidth() * 2)
                 mIsBossMove = true;
         }
 
         if (mIsBossMove) {
             mBoss.move(-4, 0);
-            if (mBoss.getLeft() <= mBitmapPlayer.getWidth() * 3 / 2)
+            if (mBoss.getLeft() <= mBitmapPlayer.getWidth() * 2)
                 mIsBossMove = false;
         }
 
@@ -258,7 +268,7 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
 
             mCanvas = getHolder().lockCanvas();
             if (mCanvas != null) {
-                mCanvas.drawColor(Color.LTGRAY);
+                mCanvas.drawBitmap(mBackGround, 0, 0, mPaint);
                 mPaint.setColor(Color.BLACK);
                 mCanvas.drawPath(mHpGage, mPaint);
 
@@ -305,7 +315,7 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
                 mRegionBossHpZone = new Region();
                 mRegionBossHpZone.setPath(mBossHpZone, mRegionWholeScreen);
 
-                mPaint.setARGB(255, 181, 170, 140);
+                mPaint.setARGB(255, 122, 141, 207);
                 mCanvas.drawPath(mBossHpZone, mPaint);
 
                 if (mIsClear) {
@@ -452,6 +462,11 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
             mBitmapPlayer = null;
         }
 
+        if (mBackGround != null) {
+            mBackGround.recycle();
+            mBackGround = null;
+        }
+
         if (mBitmapBoss != null) {
             mBitmapBoss.recycle();
             mBitmapBoss = null;
@@ -507,9 +522,9 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
         BulletObject bossBullet;
 
 
-        for (int left = mBoss.getLeft(); left <= mBoss.getLeft() + mBitmapBullet.getWidth() * 6; left += mBitmapBullet.getWidth() * 2) {
+        for (int left = mBoss.getLeft(); left <= mBoss.getLeft() + mBitmapBullet.getWidth() * 9; left += mBitmapBullet.getWidth() * 3) {
             int top = mBoss.getCenterY();
-            int ySpeed = heightAdjust(8);
+            int ySpeed = heightAdjust(7);
             bossBullet = new StraightShoot(left, top, mBitmapBullet.getWidth(), mBitmapBullet.getHeight(), 0, ySpeed);
             mBulletList.add(bossBullet);
         }
@@ -518,12 +533,15 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
     private void newBossBulletTwo() {
         BulletObject bossBullet;
 
-        for (int left = mBoss.getLeft() - mBitmapBullet.getWidth(); left <= mBoss.getLeft() + mBitmapBullet.getWidth() * 8; left += mBitmapBullet.getWidth() * 2) {
-            int top = mBoss.getCenterY();
-            int ySpeed = heightAdjust(8);
+
+        int left = mBoss.getCenterX();
+        int top = mBoss.getButton();
+
+        int ySpeed = heightAdjust(4);
+
             bossBullet = new StraightShoot(left, top, mBitmapBullet.getWidth(), mBitmapBullet.getHeight(), 0, ySpeed);
             mBulletList.add(bossBullet);
-        }
+
     }
 
     private void newPlayerBullet() {

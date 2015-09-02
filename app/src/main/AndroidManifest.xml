@@ -19,10 +19,6 @@
         </activity>
         <activity
             android:screenOrientation="portrait"
-            android:name=".AvoidModeMove"
-            android:label="@string/title_activity_game"></activity>
-        <activity
-            android:screenOrientation="portrait"
             android:name=".BossMove"
             android:label="@string/title_activity_game"></activity>
         <activity
@@ -31,35 +27,11 @@
             android:label="@string/title_activity_game"></activity>
         <activity
             android:screenOrientation="portrait"
-            android:name=".PracticeModeMove"
-            android:label="@string/title_activity_game"></activity>
-        <activity
-            android:screenOrientation="portrait"
-            android:name=".BossMoveTwo"
-            android:label="@string/title_activity_game"></activity>
-        <activity
-            android:screenOrientation="portrait"
-            android:name=".BossMoveFour"
-            android:label="@string/title_activity_game"></activity>
-        <activity
-            android:screenOrientation="portrait"
-            android:name=".BossMoveThree"
-            android:label="@string/title_activity_game"></activity>
-        <activity
-            android:screenOrientation="portrait"
             android:name=".BossMoveSix"
             android:label="@string/title_activity_game"></activity>
         <activity
             android:screenOrientation="portrait"
-            android:name=".BossMoveSeven"
-            android:label="@string/title_activity_game"></activity>
-        <activity
-            android:screenOrientation="portrait"
             android:name=".BossMoveEight"
-            android:label="@string/title_activity_game"></activity>
-        <activity
-            android:screenOrientation="portrait"
-            android:name=".BossMoveFive"
             android:label="@string/title_activity_game"></activity>
     </application>
 

@@ -28,7 +28,7 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
     private static final int SAFE_AREA = 73;
     private int mLifeCount = 0;
 
-    private static final int FIRST_BOSS_LIFE = 350;
+    private static final int FIRST_BOSS_LIFE = 410;
     private static final int PLAYER_LIFE = 6;
     private static final int BASE_TIME = 120;
 
@@ -166,7 +166,7 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
 
         mSafeArea = heightAdjust(SAFE_AREA);
 
-        mStageOne = MediaPlayer.create(getContext(), R.raw.stagefirst);
+        mStageOne = MediaPlayer.create(getContext(), R.raw.bgm_6);
 
         this.mStageOne.setLooping(true);
         mStageOne.start();
@@ -226,7 +226,7 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
             mPlayerBulletSecondSave = mSecond;
         }
 
-        if (mSecond - mBulletOneSecondSave == 6) {
+        if (mSecond - mBulletOneSecondSave == 5) {
             newBossBulletOne();
             mBulletOneSecondSave = mSecond;
         }
@@ -253,7 +253,6 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
                 mCanvas.drawBitmap(mBackGround, 0, 0, mPaint);
                 mPaint.setColor(Color.BLACK);
                 mCanvas.drawPath(mHpGage, mPaint);
-
 
 
                 //衝突チェック
@@ -441,6 +440,11 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
             mBitmapPlayer = null;
         }
 
+        if (mBackGround != null) {
+            mBackGround.recycle();
+            mBackGround = null;
+        }
+
         if (mBitmapBoss != null) {
             mBitmapBoss.recycle();
             mBitmapBoss = null;
@@ -496,15 +500,15 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
         BulletObject bossBullet;
 
         int top = mBoss.getCenterY();
-        int left = mBoss.getCenterX();
+        int left = mBoss.getLeft() + mBitmapBullet.getWidth() + mRand.nextInt(mBitmapBoss.getWidth() / 2);
         int xSpeed = widthAdjust(mRand.nextInt(5));
-        int ySpeed = heightAdjust(mRand.nextInt(10)) + 3;
+        int ySpeed = heightAdjust(mRand.nextInt(10)) + 2;
 
         bossBullet = new DiagonalBullet(left, top, mBitmapBullet.getWidth(), mBitmapBullet.getHeight(), xSpeed, ySpeed);
         mBulletList.add(bossBullet);
 
-        xSpeed = widthAdjust(mRand.nextInt(5));
-        ySpeed = heightAdjust(mRand.nextInt(10)) + 3;
+        xSpeed = widthAdjust(mRand.nextInt(4));
+        ySpeed = heightAdjust(mRand.nextInt(11)) + 2;
 
         bossBullet = new DiagonalBullet(left, top, mBitmapBullet.getWidth(), mBitmapBullet.getHeight(), -xSpeed, ySpeed);
         mBulletList.add(bossBullet);

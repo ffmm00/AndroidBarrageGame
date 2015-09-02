@@ -31,9 +31,9 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
     private int mLifeCount = 0;
     private CharacterMove mGameActivity;
 
-    private static final int BULLETS = 7;
+    private static final int BULLETS = 6;
 
-    private static final int FIRST_BOSS_LIFE = 320;
+    private static final int FIRST_BOSS_LIFE = 350;
     private static final int PLAYER_LIFE = 6;
     private static final int BASE_TIME = 120;
 
@@ -151,7 +151,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
 
         mBitmapPlayer = BitmapFactory.decodeResource(rsc, R.drawable.player_xxxhdpi_b);
 
-        mBitmapBoss = BitmapFactory.decodeResource(rsc, R.drawable.boss_xxxhdpi);
+        mBitmapBoss = BitmapFactory.decodeResource(rsc, R.drawable.boss_17);
         mBitmapBullet = BitmapFactory.decodeResource(rsc, R.drawable.bossbullet_xxxhdpi);
         mBitmapPlayerBullet = BitmapFactory.decodeResource(rsc, R.drawable.playerbullet_xxxhdpi);
         mBitmapButton = BitmapFactory.decodeResource(rsc, R.drawable.button_xxxhdpi);
@@ -184,7 +184,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
 
         mSafeArea = heightAdjust(SAFE_AREA);
 
-        mStageOne = MediaPlayer.create(getContext(), R.raw.stagefirst);
+        mStageOne = MediaPlayer.create(getContext(), R.raw.bgm_last);
 
         this.mStageOne.setLooping(true);
         mStageOne.start();
@@ -509,6 +509,11 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         if (mBitmapPlayer != null) {
             mBitmapPlayer.recycle();
             mBitmapPlayer = null;
+        }
+
+        if (mBackGround != null) {
+            mBackGround.recycle();
+            mBackGround = null;
         }
 
         if (mBitmapBoss != null) {
