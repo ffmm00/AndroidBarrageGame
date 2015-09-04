@@ -69,6 +69,16 @@ public class MainActivity extends Activity {
             }
         });
 
+        Button btnNexto = (Button) this.findViewById(R.id.button);
+        btnNexto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mOpening.stop();
+                Intent intent = new Intent(MainActivity.this, BossMoveTest.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
     @Override
