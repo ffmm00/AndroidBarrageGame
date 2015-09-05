@@ -2,8 +2,10 @@ package com.fm_example.barragegame;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -69,16 +71,16 @@ public class MainActivity extends Activity {
             }
         });
 
-        Button btnNexto = (Button) this.findViewById(R.id.button);
-        btnNexto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mOpening.stop();
-                Intent intent = new Intent(MainActivity.this, BossMoveTest.class);
-                startActivity(intent);
-            }
-        });
 
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+            mOpening.stop();
+            finish();
+        }
+        return super.dispatchKeyEvent(event);
     }
 
     @Override
@@ -102,4 +104,12 @@ public class MainActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onUserLeaveHint() {
+        if (mOpening.isPlaying())
+            mOpening.stop();
+    }
+
+
 }
