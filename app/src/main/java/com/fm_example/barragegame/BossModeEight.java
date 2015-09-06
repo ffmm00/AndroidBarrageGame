@@ -151,8 +151,8 @@ public class BossModeEight extends SurfaceView implements SurfaceHolder.Callback
         mBitmapBoss = Bitmap.createScaledBitmap(mBitmapBoss, mWidth / 3,
                 mHeight / 8, false);
 
-        mBitmapBullet = Bitmap.createScaledBitmap(mBitmapBullet, mWidth / 22,
-                mHeight / 36, false);
+        mBitmapBullet = Bitmap.createScaledBitmap(mBitmapBullet, mWidth / 32,
+                mHeight / 40, false);
 
         mBitmapPlayerBullet = Bitmap.createScaledBitmap(mBitmapPlayerBullet, mWidth / 24,
                 mHeight / 38, false);
@@ -160,7 +160,7 @@ public class BossModeEight extends SurfaceView implements SurfaceHolder.Callback
         mBitmapButton = Bitmap.createScaledBitmap(mBitmapButton, mWidth / 3,
                 mHeight / 20, false);
 
-        mBitmapBullet_2 = Bitmap.createScaledBitmap(mBitmapBullet, mWidth / 14,
+        mBitmapBullet_2 = Bitmap.createScaledBitmap(mBitmapBullet_2, mWidth / 14,
                 mHeight / 21, false);
 
         for (int i = 0; i < PLAYER_LIFE; i++) {
@@ -225,10 +225,10 @@ public class BossModeEight extends SurfaceView implements SurfaceHolder.Callback
             mBulletOneSecondSave = 0;
         }
 
-        if (mSecond - mPlayerBulletSecondSave == 2) {
-            newPlayerBullet();
-            mPlayerBulletSecondSave = mSecond;
-        }
+        // if (mSecond - mPlayerBulletSecondSave == 2) {
+        //     newPlayerBullet();
+        //     mPlayerBulletSecondSave = mSecond;
+        // }
 
         //if (mSecond - mBulletOneSecondSave == 15) {
         //    newBossBulletOne();
@@ -509,6 +509,12 @@ public class BossModeEight extends SurfaceView implements SurfaceHolder.Callback
         }
     }
 
+    private void newBullet() {
+        BulletObject bullet;
+        int left = mBitmapBullet_2.getWidth();
+
+    }
+
 
     private void newPlayerBullet() {
         StraightShoot straightShoot;
@@ -541,7 +547,7 @@ public class BossModeEight extends SurfaceView implements SurfaceHolder.Callback
                     (mPlayer.getTop() + mSafeArea + heightAdjust(8) < bulletObject.getButton()) &&
                     (mPlayer.getRight() - mSafeArea > bulletObject.getLeft()) &&
                     (mPlayer.getButton() - mSafeArea > bulletObject.getTop())) {
-                mLifeCount++;
+                // mLifeCount++;
                 bullet.remove();
             }
         }

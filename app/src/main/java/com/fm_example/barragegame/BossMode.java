@@ -630,7 +630,7 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
         Iterator<BulletObject> bullet = mBulletList.iterator();
         while (bullet.hasNext()) {
             BulletObject bulletObject = bullet.next();
-            if (bulletObject.getButton() < mBitmapBullet.getHeight() * 4 ||
+            if (bulletObject.getTop() < -mBitmapBullet.getHeight() ||
                     bulletObject.getLeft() < -mBitmapBullet.getWidth() * 4 ||
                     bulletObject.getRight() > mWidth + mBitmapBullet.getWidth() * 4 ||
                     bulletObject.getTop() > mHeight + mBitmapBullet.getHeight()) {
@@ -641,7 +641,7 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
         Iterator<BulletObject> bullet_2 = mBulletFeatherList.iterator();
         while (bullet_2.hasNext()) {
             BulletObject bulletObject = bullet_2.next();
-            if (bulletObject.getButton() < mBitmapBullet.getHeight() * 4 ||
+            if (bulletObject.getTop() < -mBitmapBullet.getHeight() ||
                     bulletObject.getLeft() < -mBitmapBullet.getWidth() * 4 ||
                     bulletObject.getRight() > mWidth + mBitmapBullet.getWidth() * 4 ||
                     bulletObject.getTop() > mHeight + mBitmapBullet.getHeight()) {
@@ -652,7 +652,7 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
         Iterator<StraightShoot> bullet_3 = mBulletNailList.iterator();
         while (bullet_3.hasNext()) {
             BulletObject bulletObject = bullet_3.next();
-            if (bulletObject.getButton() < mBitmapBullet.getHeight() * 4 ||
+            if (bulletObject.getTop() < -mBitmapBullet.getHeight() ||
                     bulletObject.getLeft() < -mBitmapBullet.getWidth() * 4 ||
                     bulletObject.getRight() > mWidth + mBitmapBullet.getWidth() * 4 ||
                     bulletObject.getTop() > mHeight + mBitmapBullet.getHeight()) {

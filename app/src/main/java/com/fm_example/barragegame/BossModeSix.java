@@ -28,8 +28,8 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
     private static final int SAFE_AREA = 73;
     private int mLifeCount = 0;
 
-    private static final int FIRST_BOSS_LIFE = 410;
-    private static final int PLAYER_LIFE = 6;
+    private static final int FIRST_BOSS_LIFE = 440;
+    private static final int PLAYER_LIFE = 4;
     private static final int BASE_TIME = 120;
 
     private int mWidth;
@@ -46,6 +46,7 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
 
     private int mPlayerBulletSecondSave;
     private int mBulletOneSecondSave;
+    private int mBulletTwoSecondSave;
 
     private boolean mIsAttached;
     private Thread mThread;
@@ -60,6 +61,7 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
     private Bitmap mBitmapBoss;
     private Bitmap mBitmapPlayerBullet;
     private Bitmap mBitmapButton;
+    private Bitmap mBitmapWhip;
     private Image mButton;
     private int mLifeDelete = PLAYER_LIFE - 1;
     private int mBullet;
@@ -68,19 +70,15 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
     private Bitmap mBitmapLife_1;
     private Bitmap mBitmapLife_2;
     private Bitmap mBitmapLife_3;
-    private Bitmap mBitmapLife_4;
-    private Bitmap mBitmapLife_5;
 
-    private Bitmap[] mBitmaplife = {mBitmapLife_0, mBitmapLife_1, mBitmapLife_2, mBitmapLife_3, mBitmapLife_4, mBitmapLife_5};
+    private Bitmap[] mBitmaplife = {mBitmapLife_0, mBitmapLife_1, mBitmapLife_2, mBitmapLife_3};
 
     private Image mLife_0;
     private Image mLife_1;
     private Image mLife_2;
     private Image mLife_3;
-    private Image mLife_4;
-    private Image mLife_5;
 
-    private Image[] mLife = {mLife_0, mLife_1, mLife_2, mLife_3, mLife_4, mLife_5};
+    private Image[] mLife = {mLife_0, mLife_1, mLife_2, mLife_3};
 
     private Path mGameEnd;
     private Region mRegionGameEnd;
@@ -104,6 +102,8 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
     private Region mRegionHpGage;
 
     private List<BulletObject> mBulletList = new ArrayList<BulletObject>();
+    private List<BulletObject> mBulletListTwo = new ArrayList<BulletObject>();
+    private List<StraightShoot> mBulletWhipList = new ArrayList<StraightShoot>();
     private List<StraightShoot> mPlayerBulletList = new ArrayList<StraightShoot>();
 
     private Random mRand;
@@ -139,6 +139,7 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
         mBitmapBullet = BitmapFactory.decodeResource(rsc, R.drawable.bossbullet_xxxhdpi);
         mBitmapPlayerBullet = BitmapFactory.decodeResource(rsc, R.drawable.playerbullet_xxxhdpi);
         mBitmapButton = BitmapFactory.decodeResource(rsc, R.drawable.button_xxxhdpi);
+        mBitmapWhip = BitmapFactory.decodeResource(rsc, R.drawable.whipbullet);
 
         mBackGround = BitmapFactory.decodeResource(rsc, R.drawable.background_10);
 
@@ -149,14 +150,17 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
         mBitmapBoss = Bitmap.createScaledBitmap(mBitmapBoss, mWidth / 4,
                 mHeight / 7, false);
 
-        mBitmapBullet = Bitmap.createScaledBitmap(mBitmapBullet, mWidth / 20,
-                mHeight / 33, false);
+        mBitmapBullet = Bitmap.createScaledBitmap(mBitmapBullet, mWidth / 32,
+                mHeight / 40, false);
 
         mBitmapPlayerBullet = Bitmap.createScaledBitmap(mBitmapPlayerBullet, mWidth / 24,
                 mHeight / 38, false);
 
         mBitmapButton = Bitmap.createScaledBitmap(mBitmapButton, mWidth / 3,
                 mHeight / 20, false);
+
+        mBitmapWhip = Bitmap.createScaledBitmap(mBitmapWhip, mWidth / 9,
+                mHeight / 120, false);
 
         for (int i = 0; i < PLAYER_LIFE; i++) {
             mBitmaplife[i] = BitmapFactory.decodeResource(rsc, R.drawable.life_xxxhdpi);
@@ -219,6 +223,7 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
         if (mSecond == 1) {
             mPlayerBulletSecondSave = 0;
             mBulletOneSecondSave = 0;
+            mBulletTwoSecondSave = 0;
         }
 
         if (mSecond - mPlayerBulletSecondSave == 2) {
@@ -226,9 +231,15 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
             mPlayerBulletSecondSave = mSecond;
         }
 
-        if (mSecond - mBulletOneSecondSave == 5) {
+        if (mSecond - mBulletOneSecondSave == 7) {
             newBossBulletOne();
+            newBossBulletTwo();
             mBulletOneSecondSave = mSecond;
+        }
+
+        if (mSecond - mBulletTwoSecondSave == 11) {
+            newBossBulletThree();
+            mBulletTwoSecondSave = mSecond;
         }
 
 
@@ -239,9 +250,28 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
         try {
             for (BulletObject bulletObject : mBulletList) {
                 if (bulletObject != null) {
-                    bulletObject.move(bulletObject.mSpeedX, bulletObject.mSpeedY);
+                    if (mSecond >= 5 && mSecond <= 30)
+                        bulletObject.move(0, 0);
+                    else
+                        bulletObject.move(bulletObject.mSpeedX, bulletObject.mSpeedY);
                 }
             }
+
+            for (BulletObject bulletObject : mBulletListTwo) {
+                if (bulletObject != null) {
+                    if (mSecond >= 35 && mSecond <= 60)
+                        bulletObject.move(0, 0);
+                    else
+                        bulletObject.move(bulletObject.mSpeedX, bulletObject.mSpeedY);
+                }
+            }
+
+            for (StraightShoot shoot : mBulletWhipList) {
+                if (shoot != null) {
+                    shoot.move(shoot.mSpeedX, shoot.mSpeedY);
+                }
+            }
+
             for (StraightShoot playershoot : mPlayerBulletList) {
                 if (playershoot != null) {
                     playershoot.move(playershoot.mSpeedX, playershoot.mSpeedY);
@@ -251,9 +281,6 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
             mCanvas = getHolder().lockCanvas();
             if (mCanvas != null) {
                 mCanvas.drawBitmap(mBackGround, 0, 0, mPaint);
-                mPaint.setColor(Color.BLACK);
-                mCanvas.drawPath(mHpGage, mPaint);
-
 
                 //衝突チェック
                 if (!mIsClear) {
@@ -289,10 +316,11 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
                 }
 
                 mBossHpZone = new Path();
-                mBossHpZone.addRect(mBitmapBullet.getHeight(), mBitmapBullet.getHeight(),
-                        mBitmapBullet.getHeight() + mBitmapPlayer.getHeight(),
-                        mBitmapBullet.getHeight() + heightAdjust((3 * (FIRST_BOSS_LIFE - mBossDamage))), Path.Direction.CW);
-
+                mBossHpZone.addRect(mBitmapBullet.getHeight() / 2, mBitmapBullet.getHeight() / 2,
+                        widthAdjust(3 * (FIRST_BOSS_LIFE - mBossDamage)) + mBitmapBullet.getHeight() / 2
+                        , mBitmapBullet.getHeight(), Path.Direction.CW);
+                mRegionBossHpZone = new Region();
+                mRegionBossHpZone.setPath(mBossHpZone, mRegionWholeScreen);
 
                 mRegionBossHpZone = new Region();
                 mRegionBossHpZone.setPath(mBossHpZone, mRegionWholeScreen);
@@ -302,8 +330,6 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
 
                 if (mIsClear) {
                     mSoundPool.play(mClear, 2.0F, 2.0F, 0, 0, 1.0F);
-                    mPaint.setColor(Color.TRANSPARENT);
-                    mCanvas.drawPath(mHpGage, mPaint);
                     String msg = "ゲームクリア";
                     mPaint.setColor(Color.BLACK);
                     mPaint.setTextSize(heightAdjust(70));
@@ -332,13 +358,20 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
 
 
                 if (!((mIsClear) || (mIsFailed))) {
-                    mPaint.setColor(Color.DKGRAY);
                     for (BulletObject bulletObject : mBulletList) {
+                        mCanvas.drawBitmap(mBitmapBullet, bulletObject.getLeft(), bulletObject.getTop(), null);
+                    }
+
+                    for (BulletObject bulletObject : mBulletListTwo) {
                         mCanvas.drawBitmap(mBitmapBullet, bulletObject.getLeft(), bulletObject.getTop(), null);
                     }
 
                     for (StraightShoot playershoot : mPlayerBulletList) {
                         mCanvas.drawBitmap(mBitmapPlayerBullet, playershoot.getLeft(), playershoot.getTop(), null);
+                    }
+
+                    for (StraightShoot shoot : mBulletWhipList) {
+                        mCanvas.drawBitmap(mBitmapWhip, shoot.getLeft(), shoot.getTop(), null);
                     }
                 }
 
@@ -385,13 +418,6 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
         mRegionGameEnd = new Region();
         mRegionGameEnd.setPath(mGameEnd, mRegionWholeScreen);
 
-        mHpGage = new Path();
-        mHpGage.addRect(mBitmapBullet.getHeight(), mBitmapBullet.getHeight(),
-                mBitmapBullet.getHeight() + mBitmapPlayer.getHeight(),
-                mBitmapBullet.getHeight() + heightAdjust((3 * (FIRST_BOSS_LIFE))), Path.Direction.CW);
-
-        mRegionHpGage = new Region();
-        mRegionHpGage.setPath(mHpGage, mRegionWholeScreen);
     }
 
     public boolean onTouchEvent(MotionEvent event) {
@@ -502,16 +528,45 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
         int top = mBoss.getCenterY();
         int left = mBoss.getLeft() + mBitmapBullet.getWidth() + mRand.nextInt(mBitmapBoss.getWidth() / 2);
         int xSpeed = widthAdjust(mRand.nextInt(5));
-        int ySpeed = heightAdjust(mRand.nextInt(10)) + 2;
+        int ySpeed = heightAdjust(mRand.nextInt(7)) + 2;
 
         bossBullet = new DiagonalBullet(left, top, mBitmapBullet.getWidth(), mBitmapBullet.getHeight(), xSpeed, ySpeed);
         mBulletList.add(bossBullet);
 
-        xSpeed = widthAdjust(mRand.nextInt(4));
-        ySpeed = heightAdjust(mRand.nextInt(11)) + 2;
+        xSpeed = widthAdjust(mRand.nextInt(5));
+        ySpeed = heightAdjust(mRand.nextInt(8)) + 2;
 
         bossBullet = new DiagonalBullet(left, top, mBitmapBullet.getWidth(), mBitmapBullet.getHeight(), -xSpeed, ySpeed);
         mBulletList.add(bossBullet);
+    }
+
+    private void newBossBulletTwo() {
+        BulletObject bossBullet;
+
+        int top = mBoss.getCenterY();
+        int left = mBoss.getLeft() + mBitmapBullet.getWidth() + mRand.nextInt(mBitmapBoss.getWidth() / 2);
+        int xSpeed = widthAdjust(mRand.nextInt(4));
+        int ySpeed = heightAdjust(mRand.nextInt(7)) + 2;
+
+        bossBullet = new DiagonalBullet(left, top, mBitmapBullet.getWidth(), mBitmapBullet.getHeight(), xSpeed, ySpeed);
+        mBulletListTwo.add(bossBullet);
+
+        xSpeed = widthAdjust(mRand.nextInt(5));
+        ySpeed = heightAdjust(mRand.nextInt(7)) + 2;
+
+        bossBullet = new DiagonalBullet(left, top, mBitmapBullet.getWidth(), mBitmapBullet.getHeight(), -xSpeed, ySpeed);
+        mBulletListTwo.add(bossBullet);
+    }
+
+    private void newBossBulletThree() {
+        StraightShoot bossBullet;
+
+        int top = mBoss.getCenterY();
+        int ySpeed = heightAdjust(7);
+        int left = mBoss.getLeft() - mBitmapBoss.getWidth() / 2 + mRand.nextInt(mBitmapBoss.getWidth() + mBitmapBoss.getWidth() / 2);
+
+        bossBullet = new StraightShoot(left, top, mBitmapWhip.getWidth(), mBitmapWhip.getHeight(), 0, ySpeed);
+        mBulletWhipList.add(bossBullet);
 
     }
 
@@ -537,6 +592,36 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
                 bullet.remove();
             }
         }
+
+        Iterator<BulletObject> bullet_2 = mBulletListTwo.iterator();
+        while (bullet_2.hasNext()) {
+            BulletObject bulletObject = bullet_2.next();
+            if (bulletObject.getButton() < mBitmapBullet.getHeight() * 4 ||
+                    bulletObject.getLeft() < -mBitmapBullet.getWidth() * 4 ||
+                    bulletObject.getRight() > mWidth + mBitmapBullet.getWidth() * 4 ||
+                    bulletObject.getTop() > mHeight + mBitmapBullet.getHeight()) {
+                bullet_2.remove();
+            }
+        }
+
+        Iterator<StraightShoot> bullet_3 = mBulletWhipList.iterator();
+        while (bullet_3.hasNext()) {
+            BulletObject bulletObject = bullet_3.next();
+            if (bulletObject.getButton() < mBitmapBullet.getHeight() * 4 ||
+                    bulletObject.getLeft() < -mBitmapBullet.getWidth() * 4 ||
+                    bulletObject.getRight() > mWidth + mBitmapBullet.getWidth() * 4 ||
+                    bulletObject.getTop() > mHeight + mBitmapBullet.getHeight()) {
+                bullet_3.remove();
+            }
+        }
+
+        Iterator<StraightShoot> bullet_4 = mPlayerBulletList.iterator();
+        while (bullet_4.hasNext()) {
+            BulletObject bulletObject = bullet_4.next();
+            if (bulletObject.getTop() < -mBitmapBullet.getHeight()) {
+                bullet_4.remove();
+            }
+        }
     }
 
     private void charaTouchedBulletDelete() {
@@ -549,6 +634,30 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
                     (mPlayer.getButton() - mSafeArea > bulletObject.getTop())) {
                 mLifeCount++;
                 bullet.remove();
+            }
+        }
+
+        Iterator<BulletObject> bullet_2 = mBulletListTwo.iterator();
+        while (bullet_2.hasNext()) {
+            BulletObject bulletObject = bullet_2.next();
+            if ((mPlayer.getLeft() + mSafeArea + heightAdjust(8) < bulletObject.getRight()) &&
+                    (mPlayer.getTop() + mSafeArea + heightAdjust(8) < bulletObject.getButton()) &&
+                    (mPlayer.getRight() - mSafeArea > bulletObject.getLeft()) &&
+                    (mPlayer.getButton() - mSafeArea > bulletObject.getTop())) {
+                mLifeCount++;
+                bullet_2.remove();
+            }
+        }
+
+        Iterator<StraightShoot> bullet_3 = mBulletWhipList.iterator();
+        while (bullet_3.hasNext()) {
+            BulletObject bulletObject = bullet_3.next();
+            if ((mPlayer.getLeft() + mSafeArea + heightAdjust(8) < bulletObject.getRight()) &&
+                    (mPlayer.getTop() + mSafeArea + heightAdjust(8) < bulletObject.getButton()) &&
+                    (mPlayer.getRight() - mSafeArea > bulletObject.getLeft()) &&
+                    (mPlayer.getButton() - mSafeArea > bulletObject.getTop())) {
+                mLifeCount++;
+                bullet_3.remove();
             }
         }
     }
