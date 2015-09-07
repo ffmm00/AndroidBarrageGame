@@ -47,6 +47,7 @@ public class CharacterMove extends Activity implements SensorEventListener {
     @Override
     protected void onResume() {
         super.onResume();
+
         mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_GAME);
         mSensorManager.registerListener(this, mMagField, SensorManager.SENSOR_DELAY_GAME);
     }
@@ -93,5 +94,6 @@ public class CharacterMove extends Activity implements SensorEventListener {
     private int rad2Deg(float rad) {
         return (int) Math.floor(Math.toDegrees(rad));
     }
+
 
 }

@@ -528,13 +528,13 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
         int top = mBoss.getCenterY();
         int left = mBoss.getLeft() + mBitmapBullet.getWidth() + mRand.nextInt(mBitmapBoss.getWidth() / 2);
         int xSpeed = widthAdjust(mRand.nextInt(5));
-        int ySpeed = heightAdjust(mRand.nextInt(7)) + 2;
+        int ySpeed = heightAdjust(mRand.nextInt(8)) + 2;
 
         bossBullet = new DiagonalBullet(left, top, mBitmapBullet.getWidth(), mBitmapBullet.getHeight(), xSpeed, ySpeed);
         mBulletList.add(bossBullet);
 
         xSpeed = widthAdjust(mRand.nextInt(5));
-        ySpeed = heightAdjust(mRand.nextInt(8)) + 2;
+        ySpeed = heightAdjust(mRand.nextInt(9)) + 2;
 
         bossBullet = new DiagonalBullet(left, top, mBitmapBullet.getWidth(), mBitmapBullet.getHeight(), -xSpeed, ySpeed);
         mBulletList.add(bossBullet);
@@ -546,13 +546,13 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
         int top = mBoss.getCenterY();
         int left = mBoss.getLeft() + mBitmapBullet.getWidth() + mRand.nextInt(mBitmapBoss.getWidth() / 2);
         int xSpeed = widthAdjust(mRand.nextInt(4));
-        int ySpeed = heightAdjust(mRand.nextInt(7)) + 2;
+        int ySpeed = heightAdjust(mRand.nextInt(8)) + 2;
 
         bossBullet = new DiagonalBullet(left, top, mBitmapBullet.getWidth(), mBitmapBullet.getHeight(), xSpeed, ySpeed);
         mBulletListTwo.add(bossBullet);
 
         xSpeed = widthAdjust(mRand.nextInt(5));
-        ySpeed = heightAdjust(mRand.nextInt(7)) + 2;
+        ySpeed = heightAdjust(mRand.nextInt(8)) + 2;
 
         bossBullet = new DiagonalBullet(left, top, mBitmapBullet.getWidth(), mBitmapBullet.getHeight(), -xSpeed, ySpeed);
         mBulletListTwo.add(bossBullet);
