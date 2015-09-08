@@ -34,7 +34,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
 
     private static final int BULLETS = 13;
 
-    private static final int FIRST_BOSS_LIFE = 400;
+    private static final int FIRST_BOSS_LIFE = 420;
     private static final int PLAYER_LIFE = 4;
     private static final int BASE_TIME = 120;
 
@@ -142,7 +142,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
 
         mBitmapBoss = BitmapFactory.decodeResource(rsc, R.drawable.boss_17);
         mBitmapBullet = BitmapFactory.decodeResource(rsc, R.drawable.bossbullet_xxxhdpi);
-        mBitmapPlayerBullet = BitmapFactory.decodeResource(rsc, R.drawable.playerbullet_xxxhdpi);
+        mBitmapPlayerBullet = BitmapFactory.decodeResource(rsc, R.drawable.playerbulletz);
         mBitmapButton = BitmapFactory.decodeResource(rsc, R.drawable.button_xxxhdpi);
 
         mBackGround = BitmapFactory.decodeResource(rsc, R.drawable.background_13);
@@ -333,13 +333,10 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
                 mRegionBossHpZone = new Region();
                 mRegionBossHpZone.setPath(mBossHpZone, mRegionWholeScreen);
 
-                if (!mIsBossPowerUp) {
-                    mPaint.setARGB(255, 166, 62, 148);
-                    mCanvas.drawPath(mBossHpZone, mPaint);
-                } else {
-                    mPaint.setARGB(255, 169, 22, 40);
-                    mCanvas.drawPath(mBossHpZone, mPaint);
-                }
+
+                mPaint.setARGB(255, 169, 22, 40);
+                mCanvas.drawPath(mBossHpZone, mPaint);
+
 
                 if (mIsClear) {
                     mSoundPool.play(mClear, 2.0F, 2.0F, 0, 0, 1.0F);
@@ -493,6 +490,11 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
             mBitmapBullet = null;
         }
 
+        if (mBitmapPlayerBullet != null) {
+            mBitmapPlayerBullet.recycle();
+            mBitmapPlayerBullet = null;
+        }
+
         for (int i = 0; i < PLAYER_LIFE; i++) {
             if (mBitmaplife[i] != null) {
                 mBitmaplife[i].recycle();
@@ -629,6 +631,14 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
                     bulletObject.getRight() > mWidth + mBitmapBullet.getWidth() * 2 ||
                     bulletObject.getTop() > mHeight + mBitmapBullet.getHeight() * 2) {
                 bullet.remove();
+            }
+        }
+
+        Iterator<StraightShoot> bullet_4 = mPlayerBulletList.iterator();
+        while (bullet_4.hasNext()) {
+            BulletObject bulletObject = bullet_4.next();
+            if (bulletObject.getTop() < -mBitmapBullet.getHeight()) {
+                bullet_4.remove();
             }
         }
     }

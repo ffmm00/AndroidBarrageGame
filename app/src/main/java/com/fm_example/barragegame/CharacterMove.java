@@ -2,6 +2,7 @@ package com.fm_example.barragegame;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -9,6 +10,7 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 public class CharacterMove extends Activity implements SensorEventListener {
 
@@ -55,6 +57,10 @@ public class CharacterMove extends Activity implements SensorEventListener {
     @Override
     protected void onPause() {
         super.onPause();
+
+        Intent i = new Intent(this, MainActivity.class);
+        this.startActivity(i);
+
         mSensorManager.unregisterListener(this, mAccelerometer);
         mSensorManager.unregisterListener(this, mMagField);
     }

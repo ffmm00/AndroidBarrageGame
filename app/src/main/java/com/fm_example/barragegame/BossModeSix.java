@@ -28,7 +28,7 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
     private static final int SAFE_AREA = 73;
     private int mLifeCount = 0;
 
-    private static final int FIRST_BOSS_LIFE = 440;
+    private static final int FIRST_BOSS_LIFE = 430;
     private static final int PLAYER_LIFE = 4;
     private static final int BASE_TIME = 120;
 
@@ -137,7 +137,7 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
 
         mBitmapBoss = BitmapFactory.decodeResource(rsc, R.drawable.boss_7);
         mBitmapBullet = BitmapFactory.decodeResource(rsc, R.drawable.bossbullet_xxxhdpi);
-        mBitmapPlayerBullet = BitmapFactory.decodeResource(rsc, R.drawable.playerbullet_xxxhdpi);
+        mBitmapPlayerBullet = BitmapFactory.decodeResource(rsc, R.drawable.playerbulletz);
         mBitmapButton = BitmapFactory.decodeResource(rsc, R.drawable.button_xxxhdpi);
         mBitmapWhip = BitmapFactory.decodeResource(rsc, R.drawable.whipbullet);
 
@@ -159,7 +159,7 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
         mBitmapButton = Bitmap.createScaledBitmap(mBitmapButton, mWidth / 3,
                 mHeight / 20, false);
 
-        mBitmapWhip = Bitmap.createScaledBitmap(mBitmapWhip, mWidth / 9,
+        mBitmapWhip = Bitmap.createScaledBitmap(mBitmapWhip, mWidth / 10,
                 mHeight / 120, false);
 
         for (int i = 0; i < PLAYER_LIFE; i++) {
@@ -231,13 +231,13 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
             mPlayerBulletSecondSave = mSecond;
         }
 
-        if (mSecond - mBulletOneSecondSave == 7) {
+        if (mSecond - mBulletOneSecondSave == 9) {
             newBossBulletOne();
             newBossBulletTwo();
             mBulletOneSecondSave = mSecond;
         }
 
-        if (mSecond - mBulletTwoSecondSave == 11) {
+        if (mSecond - mBulletTwoSecondSave == 12) {
             newBossBulletThree();
             mBulletTwoSecondSave = mSecond;
         }
@@ -250,7 +250,7 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
         try {
             for (BulletObject bulletObject : mBulletList) {
                 if (bulletObject != null) {
-                    if (mSecond >= 5 && mSecond <= 30)
+                    if (mSecond >= 0 && mSecond <= 38)
                         bulletObject.move(0, 0);
                     else
                         bulletObject.move(bulletObject.mSpeedX, bulletObject.mSpeedY);
@@ -259,7 +259,7 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
 
             for (BulletObject bulletObject : mBulletListTwo) {
                 if (bulletObject != null) {
-                    if (mSecond >= 35 && mSecond <= 60)
+                    if (mSecond >= 28 && mSecond <= 60)
                         bulletObject.move(0, 0);
                     else
                         bulletObject.move(bulletObject.mSpeedX, bulletObject.mSpeedY);
@@ -479,6 +479,16 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
         if (mBitmapBullet != null) {
             mBitmapBullet.recycle();
             mBitmapBullet = null;
+        }
+
+        if (mBitmapWhip != null) {
+            mBitmapWhip.recycle();
+            mBitmapWhip = null;
+        }
+
+        if (mBitmapPlayerBullet != null) {
+            mBitmapPlayerBullet.recycle();
+            mBitmapPlayerBullet = null;
         }
 
         for (int i = 0; i < PLAYER_LIFE; i++) {

@@ -135,7 +135,7 @@ public class BossModeEight extends SurfaceView implements SurfaceHolder.Callback
 
         mBitmapBoss = BitmapFactory.decodeResource(rsc, R.drawable.boss_11);
         mBitmapBullet = BitmapFactory.decodeResource(rsc, R.drawable.bossbullet_xxxhdpi);
-        mBitmapPlayerBullet = BitmapFactory.decodeResource(rsc, R.drawable.playerbullet_xxxhdpi);
+        mBitmapPlayerBullet = BitmapFactory.decodeResource(rsc, R.drawable.playerbulletz);
         mBitmapBullet_2 = BitmapFactory.decodeResource(rsc, R.drawable.bigbullet_2);
         mBitmapButton = BitmapFactory.decodeResource(rsc, R.drawable.button_xxxhdpi);
 
@@ -250,9 +250,9 @@ public class BossModeEight extends SurfaceView implements SurfaceHolder.Callback
                         bulletObject.mSpeedY = widthAdjust(6);
                     }
 
-                    if (mIsWater && (mSecond == 55 || mSecond == 56) && bulletObject.mSpeedX != -widthAdjust(5)) {
+                    if (mIsWater && (mSecond == 55 || mSecond == 56) && bulletObject.mSpeedX != -widthAdjust(4)) {
                         bulletObject.mSpeedX--;
-                        bulletObject.mSpeedY = widthAdjust(6);
+                        bulletObject.mSpeedY = widthAdjust(5);
                     }
 
                     bulletObject.move(bulletObject.mSpeedX, bulletObject.mSpeedY);
@@ -476,6 +476,11 @@ public class BossModeEight extends SurfaceView implements SurfaceHolder.Callback
             mBackGround = null;
         }
 
+        if (mBitmapPlayerBullet != null) {
+            mBitmapPlayerBullet.recycle();
+            mBitmapPlayerBullet = null;
+        }
+
         for (int i = 0; i < PLAYER_LIFE; i++) {
             if (mBitmaplife[i] != null) {
                 mBitmaplife[i].recycle();
@@ -610,8 +615,19 @@ public class BossModeEight extends SurfaceView implements SurfaceHolder.Callback
         Iterator<BulletObject> bullet_2 = mBigBulletList.iterator();
         while (bullet_2.hasNext()) {
             BulletObject bulletObject = bullet_2.next();
-            if (bulletObject.getTop() > mHeight + mBitmapBullet_2.getHeight()) {
+            if (bulletObject.getButton() < -mBitmapBullet.getHeight() * 2 ||
+                    bulletObject.getLeft() < -mBitmapBullet.getWidth() * 2 ||
+                    bulletObject.getRight() > mWidth + mBitmapBullet.getWidth() * 2 ||
+                    bulletObject.getTop() > mHeight + mBitmapBullet.getHeight() * 2) {
                 bullet_2.remove();
+            }
+        }
+
+        Iterator<StraightShoot> bullet_4 = mPlayerBulletList.iterator();
+        while (bullet_4.hasNext()) {
+            BulletObject bulletObject = bullet_4.next();
+            if (bulletObject.getTop() < -mBitmapBullet.getHeight()) {
+                bullet_4.remove();
             }
         }
     }
