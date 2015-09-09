@@ -28,6 +28,8 @@ import android.widget.ProgressBar;
 
 public class GameActivity extends SurfaceView implements SurfaceHolder.Callback, Runnable {
 
+    private FpsMgr _gameMgr = new FpsMgr();
+
     private static final int SAFE_AREA = 73;
     private int mLifeCount = 0;
     private CharacterMove mGameActivity;
@@ -195,6 +197,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
     @Override
     public void run() {
         while (mIsAttached) {
+            _gameMgr.onUpdate();
             drawGameBoard();
         }
     }
@@ -290,6 +293,8 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
             mCanvas = getHolder().lockCanvas();
             if (mCanvas != null) {
                 mCanvas.drawBitmap(mBackGround, 0, 0, mPaint);
+
+                _gameMgr.onDraw(mCanvas);
 
 
                 //衝突チェック
