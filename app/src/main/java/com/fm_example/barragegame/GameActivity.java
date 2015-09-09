@@ -475,10 +475,6 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
             mBitmapPlayer = null;
         }
 
-        if (mBackGround != null) {
-            mBackGround.recycle();
-            mBackGround = null;
-        }
 
         if (mBitmapBoss != null) {
             mBitmapBoss.recycle();
@@ -493,6 +489,11 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
         if (mBitmapPlayerBullet != null) {
             mBitmapPlayerBullet.recycle();
             mBitmapPlayerBullet = null;
+        }
+
+        if (mBackGround != null) {
+            mBackGround.recycle();
+            mBackGround = null;
         }
 
         for (int i = 0; i < PLAYER_LIFE; i++) {

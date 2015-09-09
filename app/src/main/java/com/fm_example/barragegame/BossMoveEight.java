@@ -13,6 +13,7 @@ import android.view.WindowManager;
 
 public class BossMoveEight extends Activity implements SensorEventListener {
 
+
     private BossModeEight mSurfaceView;
     private SensorManager mSensorManager;
     private Sensor mMagField;
@@ -57,11 +58,10 @@ public class BossMoveEight extends Activity implements SensorEventListener {
     protected void onPause() {
         super.onPause();
 
-        Intent i = new Intent(this, MainActivity.class);
-        this.startActivity(i);
-
         mSensorManager.unregisterListener(this, mAccelerometer);
         mSensorManager.unregisterListener(this, mMagField);
+
+        finish();
     }
 
     @Override

@@ -9,7 +9,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ボスモード４"
+        android:text="@string/stage4"
         android:id="@+id/button3"
         android:layout_below="@+id/button14"
         android:layout_alignLeft="@+id/button12"
@@ -18,7 +18,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ボスモード１"
+        android:text="@string/stage1"
         android:id="@+id/button4"
         android:layout_above="@+id/button12"
         android:layout_alignLeft="@+id/button12"
@@ -29,7 +29,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ボスモード２"
+        android:text="@string/stage2"
         android:id="@+id/button12"
         android:layout_above="@+id/button14"
         android:layout_centerHorizontal="true" />
@@ -39,7 +39,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ボスモード３"
+        android:text="@string/stage3"
         android:id="@+id/button14"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />

@@ -26,6 +26,8 @@ import java.util.Random;
 
 public class BossModeEight extends SurfaceView implements SurfaceHolder.Callback, Runnable {
 
+    private FpsMgr _gameMgr = new FpsMgr();
+
     private static final int SAFE_AREA = 73;
     private int mLifeCount = 0;
     private BossMove mBossMove;
@@ -189,6 +191,7 @@ public class BossModeEight extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public void run() {
         while (mIsAttached) {
+            _gameMgr.onUpdate();
             drawGameBoard();
         }
     }
@@ -273,6 +276,7 @@ public class BossModeEight extends SurfaceView implements SurfaceHolder.Callback
             if (mCanvas != null) {
 
                 mCanvas.drawBitmap(mBackGround, 0, 0, mPaint);
+                _gameMgr.onDraw(mCanvas);
 
                 //衝突チェック
                 if (!mIsClear) {
@@ -539,6 +543,7 @@ public class BossModeEight extends SurfaceView implements SurfaceHolder.Callback
 
         int ySpeed = heightAdjust(7);
         int xSpeed = widthAdjust(6);
+
 
         bossBullet = new DiagonalBullet(left, top, mBitmapBullet.getWidth(), mBitmapBullet.getHeight(), 0, ySpeed);
         mBulletList.add(bossBullet);

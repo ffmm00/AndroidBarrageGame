@@ -17,6 +17,7 @@ import android.media.SoundPool;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -497,7 +498,6 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
                 mBitmaplife[i] = null;
             }
         }
-
 
         mStageOne.stop();
         mIsAttached = false;
