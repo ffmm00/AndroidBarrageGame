@@ -23,9 +23,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         mOpening = MediaPlayer.create(this, R.raw.theme);
-
         mOpening.setLooping(true);
-
         mOpening.start();
 
 
@@ -70,7 +68,16 @@ public class MainActivity extends Activity {
                 startActivity(intent);
             }
         });
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (!mOpening.isPlaying()) {
+            mOpening = MediaPlayer.create(this, R.raw.theme);
+            mOpening.setLooping(true);
+            mOpening.start();
+        }
 
     }
 
