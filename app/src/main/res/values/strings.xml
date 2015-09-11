@@ -5,6 +5,7 @@
     <string name="stage2">ステージ２</string>
     <string name="stage3">ステージ３</string>
     <string name="stage4">ステージ４</string>
+    <string name="endgame">ゲーム終了</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_game">GameActivity</string>
 </resources>

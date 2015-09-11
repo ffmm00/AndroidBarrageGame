@@ -68,6 +68,16 @@ public class MainActivity extends Activity {
                 startActivity(intent);
             }
         });
+
+
+        Button btnNexth = (Button) this.findViewById(R.id.button);
+        btnNexth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mOpening.stop();
+                finish();
+            }
+        });
     }
 
     @Override
@@ -84,7 +94,9 @@ public class MainActivity extends Activity {
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-            mOpening.stop();
+            if (mOpening.isPlaying()) {
+                mOpening.stop();
+            }
             finish();
         }
         return super.dispatchKeyEvent(event);

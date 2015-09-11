@@ -1,6 +1,7 @@
 package com.fm_example.barragegame;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -118,6 +119,7 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
         mFail = mSoundPool.load(context, R.raw.failedsound, 1);
         mClear = mSoundPool.load(context, R.raw.clearedsound, 1);
 
+
         mHolder = getHolder();
         mHolder.addCallback(this);
     }
@@ -143,7 +145,6 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
         mBitmapWhip = BitmapFactory.decodeResource(rsc, R.drawable.whipbullet);
 
         mBackGround = BitmapFactory.decodeResource(rsc, R.drawable.background_10);
-
 
         mBitmapPlayer = Bitmap.createScaledBitmap(mBitmapPlayer, mWidth / 10,
                 mHeight / 15, false);
@@ -429,8 +430,7 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
                 if (mIsClear || mIsFailed) {
                     if (mRegionGameEnd.contains((int) event.getX(), (int) event.getY())) {
                         mStageOne.stop();
-                        Intent i = new Intent(getContext(), MainActivity.class);
-                        getContext().startActivity(i);
+                        ((Activity) getContext()).finish();
                     }
                 }
                 break;
@@ -464,6 +464,8 @@ public class BossModeSix extends SurfaceView implements SurfaceHolder.Callback, 
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
+
+
         if (mBitmapPlayer != null) {
             mBitmapPlayer.recycle();
             mBitmapPlayer = null;

@@ -1,5 +1,6 @@
 package com.fm_example.barragegame;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -434,8 +435,7 @@ public class GameActivity extends SurfaceView implements SurfaceHolder.Callback,
                 if (mIsClear || mIsFailed) {
                     if (mRegionGameEnd.contains((int) event.getX(), (int) event.getY())) {
                         mStageOne.stop();
-                        Intent i = new Intent(getContext(), MainActivity.class);
-                        getContext().startActivity(i);
+                        ((Activity) getContext()).finish();
                     }
                 }
                 break;

@@ -1,6 +1,7 @@
 package com.fm_example.barragegame;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -429,8 +430,7 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
                 if (mIsClear || mIsFailed) {
                     if (mRegionGameEnd.contains((int) event.getX(), (int) event.getY())) {
                         mStageOne.stop();
-                        Intent i = new Intent(getContext(), MainActivity.class);
-                        getContext().startActivity(i);
+                        ((Activity) getContext()).finish();
                     }
                 }
                 break;
@@ -487,11 +487,6 @@ public class BossMode extends SurfaceView implements SurfaceHolder.Callback, Run
         if (mBitmapBullet != null) {
             mBitmapBullet.recycle();
             mBitmapBullet = null;
-        }
-
-        if (mBitmapPlayerBullet != null) {
-            mBitmapPlayerBullet.recycle();
-            mBitmapPlayerBullet = null;
         }
 
         if (mBitmapPlayerBullet != null) {
